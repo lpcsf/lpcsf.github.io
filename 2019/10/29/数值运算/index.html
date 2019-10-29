@@ -58,16 +58,16 @@
   };
 </script>
 
-  <meta name="description" content="数值运算12345678910111213##只能做整数运算[root@shell ~]# expr 10 + 1020[root@shell ~]# expr 10 - 100[root@shell ~]# expr 10 * 10expr: syntax error[root@shell ~]# expr 10 &quot;*&quot; 10100[root@shell ~]# expr 10 \* 10100">
+  <meta name="description" content="数值运算##只能做整数运算 [root@shell ~]# expr 10 + 10 20 [root@shell ~]# expr 10 - 10 0 [root@shell ~]# expr 10 * 10 expr: syntax error [root@shell ~]# expr 10 &quot;*&quot; 10 100 [root@shell ~]# expr 10 \* 10 100 [root@">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数值运算">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;29&#x2F;%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97&#x2F;index.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;lpcsf.git.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97&#x2F;index.html">
 <meta property="og:site_name" content="ONE">
-<meta property="og:description" content="数值运算12345678910111213##只能做整数运算[root@shell ~]# expr 10 + 1020[root@shell ~]# expr 10 - 100[root@shell ~]# expr 10 * 10expr: syntax error[root@shell ~]# expr 10 &quot;*&quot; 10100[root@shell ~]# expr 10 \* 10100">
+<meta property="og:description" content="数值运算##只能做整数运算 [root@shell ~]# expr 10 + 10 20 [root@shell ~]# expr 10 - 10 0 [root@shell ~]# expr 10 * 10 expr: syntax error [root@shell ~]# expr 10 &quot;*&quot; 10 100 [root@shell ~]# expr 10 \* 10 100 [root@">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-10-29T12:07:50.660Z">
 <meta name="twitter:card" content="summary">
-  <link rel="canonical" href="http://yoursite.com/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/">
+  <link rel="canonical" href="http://lpcsf.git.io/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/">
 
 
 <script id="page-configurations">
@@ -264,7 +264,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/">
+    <link itemprop="mainEntityOfPage" href="http://lpcsf.git.io/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ONE_lpc">
@@ -320,7 +320,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>1.8k</span>
+              <span>1.7k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -343,29 +343,105 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>数值运算</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">##只能做整数运算</span><br><span class="line">[root@shell ~]# expr 10 + 10</span><br><span class="line"><span class="number">20</span></span><br><span class="line">[root@shell ~]# expr 10 - 10</span><br><span class="line"><span class="number">0</span></span><br><span class="line">[root@shell ~]# expr 10 * 10</span><br><span class="line">expr: syntax error</span><br><span class="line">[root@shell ~]# expr 10 "*" 10</span><br><span class="line"><span class="number">100</span></span><br><span class="line">[root@shell ~]# expr 10 \* 10</span><br><span class="line"><span class="number">100</span></span><br><span class="line">[root@shell ~]# expr 10 / 10</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+        <p>数值运算</p><pre class=" language-java"><code class="language-java">##只能做整数运算
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">+</span> <span class="token number">10</span>
+<span class="token number">20</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">-</span> <span class="token number">10</span>
+<span class="token number">0</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">*</span> <span class="token number">10</span>
+expr<span class="token operator">:</span> syntax error
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token string">"*"</span> <span class="token number">10</span>
+<span class="token number">100</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> \<span class="token operator">*</span> <span class="token number">10</span>
+<span class="token number">100</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">/</span> <span class="token number">10</span>
+<span class="token number">1</span></code></pre><a id="more"></a>
 
+<pre class=" language-java"><code class="language-java">#只能做整数运算
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let sum<span class="token operator">=</span><span class="token number">10</span><span class="token operator">*</span><span class="token number">10</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># echo $sum
+<span class="token number">100</span>
 
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#只能做整数运算</span><br><span class="line">[root@shell ~]# let sum=10*10</span><br><span class="line">[root@shell ~]# echo $sum</span><br><span class="line"><span class="number">100</span></span><br><span class="line"></span><br><span class="line">[root@shell ~]# sum1=10</span><br><span class="line">[root@shell ~]# sum2=20</span><br><span class="line">[root@shell ~]# let $sum1+$sum2</span><br><span class="line">[root@shell ~]# let sum=$sum1+$sum2</span><br><span class="line">[root@shell ~]# echo $sum</span><br><span class="line"><span class="number">30</span></span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">只能做整数运算，运算符中速度最快的(大量数据时体现)</span></span><br><span class="line">[root@shell ~]# echo $((10+10))</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# echo $((1-10))</span><br><span class="line">-9</span><br><span class="line">[root@shell ~]# echo $((2*10))</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# echo $((2/10))</span><br><span class="line">0</span><br><span class="line">[root@shell ~]# echo $((10/2))</span><br><span class="line">5</span><br><span class="line">[root@shell ~]# echo $((10%2))</span><br><span class="line">0</span><br><span class="line">[root@shell ~]# echo $((2%10))</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">使用bc计算器，可以计算小数</span></span><br><span class="line">[root@shell ~]# echo 10*2|bc</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# echo 10-2|bc</span><br><span class="line">8</span><br><span class="line">[root@shell ~]# echo 10-2.5|bc</span><br><span class="line">7.5</span><br><span class="line">[root@shell ~]# echo 10*2.5|bc</span><br><span class="line">25.0</span><br><span class="line">[root@shell ~]# echo 10/2.5|bc</span><br><span class="line">4</span><br><span class="line">[root@shell ~]# echo 10+2.5|bc</span><br><span class="line">12.5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">awk进行整数和小数运算</span></span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10-2&#125;'</span><br><span class="line">8</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10+2&#125;'</span><br><span class="line">12</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10*2&#125;'</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10/2&#125;'</span><br><span class="line">5</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10/2.5&#125;'</span><br><span class="line">4</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10*2.5&#125;'</span><br><span class="line">25</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10-2.5&#125;'</span><br><span class="line">7.5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">python运算整数和小数</span></span><br><span class="line">[root@shell ~]# python</span><br><span class="line">Python 2.7.5 (default, Oct 30 2018, 23:45:53) </span><br><span class="line">[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux2</span><br><span class="line">Type "help", "copyright", "credits" or "license" for more information.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10+2.5</span></span><br><span class="line">12.5</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10-2.5</span></span><br><span class="line">7.5</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10/2.5</span></span><br><span class="line">4.0</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10*2.5</span></span><br><span class="line">25.0</span><br></pre></td></tr></table></figure>
-
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># sum1<span class="token operator">=</span><span class="token number">10</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># sum2<span class="token operator">=</span><span class="token number">20</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let $sum1<span class="token operator">+</span>$sum2
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let sum<span class="token operator">=</span>$sum1<span class="token operator">+</span>$sum2
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># echo $sum
+<span class="token number">30</span></code></pre>
+<pre class=" language-shell"><code class="language-shell">#只能做整数运算，运算符中速度最快的(大量数据时体现)
+[root@shell ~]# echo $((10+10))
+20
+[root@shell ~]# echo $((1-10))
+-9
+[root@shell ~]# echo $((2*10))
+20
+[root@shell ~]# echo $((2/10))
+0
+[root@shell ~]# echo $((10/2))
+5
+[root@shell ~]# echo $((10%2))
+0
+[root@shell ~]# echo $((2%10))
+2</code></pre>
+<pre class=" language-shell"><code class="language-shell">#使用bc计算器，可以计算小数
+[root@shell ~]# echo 10*2|bc
+20
+[root@shell ~]# echo 10-2|bc
+8
+[root@shell ~]# echo 10-2.5|bc
+7.5
+[root@shell ~]# echo 10*2.5|bc
+25.0
+[root@shell ~]# echo 10/2.5|bc
+4
+[root@shell ~]# echo 10+2.5|bc
+12.5</code></pre>
+<pre class=" language-shell"><code class="language-shell">#awk进行整数和小数运算
+[root@shell ~]# awk 'BEGIN{print 10-2}'
+8
+[root@shell ~]# awk 'BEGIN{print 10+2}'
+12
+[root@shell ~]# awk 'BEGIN{print 10*2}'
+20
+[root@shell ~]# awk 'BEGIN{print 10/2}'
+5
+[root@shell ~]# awk 'BEGIN{print 10/2.5}'
+4
+[root@shell ~]# awk 'BEGIN{print 10*2.5}'
+25
+[root@shell ~]# awk 'BEGIN{print 10-2.5}'
+7.5</code></pre>
+<pre class=" language-shell"><code class="language-shell">#python运算整数和小数
+[root@shell ~]# python
+Python 2.7.5 (default, Oct 30 2018, 23:45:53) 
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 10+2.5
+12.5
+>>> 10-2.5
+7.5
+>>> 10/2.5
+4.0
+>>> 10*2.5
+25.0</code></pre>
 <p>条件表达式</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[ -f file ]	是否为文件</span><br><span class="line">[ -d dir ]  是否为目录</span><br><span class="line">[ -e file ] 是否存在</span><br><span class="line">[ -r fiel]	文件是有可读</span><br><span class="line">[ -w fiel]	文件是有可写</span><br><span class="line">[ -x fiel]	文件是可执行</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[ -f file ]    是否为文件
+[ -d dir ]  是否为目录
+[ -e file ] 是否存在
+[ -r fiel]    文件是有可读
+[ -w fiel]    文件是有可写
+[ -x fiel]    文件是可执行</code></pre>
 <p>数值表达式：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[ 整数1 比较符 整数2 ]</span><br><span class="line">[ 整数1 -eq 整数2 ] 等于</span><br><span class="line">[ 整数1 -ne 整数2 ] 不等于</span><br><span class="line">[ 整数1 -lt 整数2 ] 小于</span><br><span class="line">[ 整数1 -le 整数2 ] 小于等于</span><br><span class="line">[ 整数1 -gt 整数2 ] 大于</span><br><span class="line">[ 整数1 -ge 整数2 ] 小大于等于 </span><br><span class="line"></span><br><span class="line">(())  [[]]  = != &gt; &gt;= &lt; &lt;=</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell"> [ 整数1 比较符 整数2 ]
+ [ 整数1 -eq 整数2 ] 等于
+ [ 整数1 -ne 整数2 ] 不等于
+ [ 整数1 -lt 整数2 ] 小于
+ [ 整数1 -le 整数2 ] 小于等于
+ [ 整数1 -gt 整数2 ] 大于
+ [ 整数1 -ge 整数2 ] 小大于等于 
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">for ((i=1;i&lt;=9;i++ ));do</span><br><span class="line">    for ((j=1;j&lt;=i;j++));do</span><br><span class="line">        echo -ne "$j\t"</span><br><span class="line">    done</span><br><span class="line">    echo</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
+ (())  [[]]  = != > >= < <=< code></=<></code></pre>
+<pre class=" language-shell"><code class="language-shell">for ((i=1;i<=9;i++ ));do for ((j="1;j<=i;j++));do" echo -ne "$j\t" done done< code></=9;i++></code></pre>
 
     </div>
 
@@ -383,7 +459,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/" title="数值运算">http://yoursite.com/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/</a>
+    <a href="http://lpcsf.git.io/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/" title="数值运算">http://lpcsf.git.io/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -475,7 +551,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -548,14 +624,14 @@
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">7k</span>
+    <span title="站点总字数">11k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">12 分钟</span>
+    <span title="站点阅读时长">18 分钟</span>
 </div>
 
         

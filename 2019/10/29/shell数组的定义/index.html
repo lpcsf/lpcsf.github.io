@@ -62,13 +62,13 @@
 <meta name="keywords" content="shell">
 <meta property="og:type" content="article">
 <meta property="og:title" content="shell数组的定义">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;29&#x2F;shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89&#x2F;index.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;lpcsf.git.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89&#x2F;index.html">
 <meta property="og:site_name" content="ONE">
 <meta property="og:description" content="shell数组01. shell数组的分类 普通数组：只能以数字作为索引(也称之为下标) 关联数组：可以使用字符作为索引 02. shell数组常用定义方式定义普通数组">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-10-29T12:14:07.221Z">
 <meta name="twitter:card" content="summary">
-  <link rel="canonical" href="http://yoursite.com/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/">
+  <link rel="canonical" href="http://lpcsf.git.io/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/">
 
 
 <script id="page-configurations">
@@ -265,7 +265,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/">
+    <link itemprop="mainEntityOfPage" href="http://lpcsf.git.io/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ONE_lpc">
@@ -338,7 +338,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>3.2k</span>
+              <span>2.7k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -366,44 +366,107 @@
 <li><strong>关联数组：可以使用字符作为索引</strong></li>
 </ul><h3 id="02-shell数组常用定义方式"><a href="#02-shell数组常用定义方式" class="headerlink" title="02. shell数组常用定义方式"></a>02. shell数组常用定义方式</h3><p>定义普通数组</p><a id="more"></a>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义普通数组1：</span></span><br><span class="line">[root@shell ~]# array=(one two three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组2:</span></span><br><span class="line">[root@shell ~]# array=([0]=one [1]=two [2]=three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组3:</span></span><br><span class="line">[root@shell ~]# array[0]=one</span><br><span class="line">[root@shell ~]# array[1]=two</span><br><span class="line">[root@shell ~]# array[2]=three</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">不连续的索引赋值，双引号将里面的内容当成一个元素</span></span><br><span class="line">[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)</span><br><span class="line">[root@shell ~]# echo $&#123;array_1[*]&#125;</span><br><span class="line">oldboy name linux centos shell kvm</span><br><span class="line">[root@shell ~]# echo $&#123;!array_1[*]&#125;</span><br><span class="line">0 1 5 6 10</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">#定义普通数组1：
+[root@shell ~]# array=(one two three)
+#定义普通数组2:
+[root@shell ~]# array=([0]=one [1]=two [2]=three)
+#定义普通数组3:
+[root@shell ~]# array[0]=one
+[root@shell ~]# array[1]=two
+[root@shell ~]# array[2]=three
+
+#不连续的索引赋值，双引号将里面的内容当成一个元素
+[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)
+[root@shell ~]# echo ${array_1[*]}
+oldboy name linux centos shell kvm
+[root@shell ~]# echo ${!array_1[*]}
+0 1 5 6 10</code></pre>
 <p>定义管理数组</p>
 <blockquote>
 <p>创建关联数组前需要声明</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义关联数组1:</span></span><br><span class="line">[root@shell ~]# declare -A oldqq</span><br><span class="line">[root@shell ~]# oldqq=([index1]=www [index2]=bbs [index3]=zhihu)</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">定义关联数组2:</span></span><br><span class="line">[root@shell ~]# declare -A oldqq</span><br><span class="line">[root@shell ~]# oldqq[index1]=www </span><br><span class="line">[root@shell ~]# oldqq[index2]=bbs </span><br><span class="line">[root@shell ~]# oldqq[index3]=zhihu</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">#定义关联数组1:
+[root@shell ~]# declare -A oldqq
+[root@shell ~]# oldqq=([index1]=www [index2]=bbs [index3]=zhihu)
 
+#定义关联数组2:
+[root@shell ~]# declare -A oldqq
+[root@shell ~]# oldqq[index1]=www 
+[root@shell ~]# oldqq[index2]=bbs 
+[root@shell ~]# oldqq[index3]=zhihu</code></pre>
 <h3 id="03-查看shell数组"><a href="#03-查看shell数组" class="headerlink" title="03. 查看shell数组"></a>03. 查看shell数组</h3><p>查看所有定义的普通数组</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# declare -a</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-SHELL"><code class="language-SHELL">[root@shell ~]# declare -a</code></pre>
 <p>查看所有定义的关联数组</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# declare -A</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# declare -A</code></pre>
 <p>查看数组所有元素(*与@都可以)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;		</span><br><span class="line">one two three</span><br><span class="line">[root@shell ~]# echo $&#123;oldqq[@]&#125;</span><br><span class="line">index1 index2 index3</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# echo ${array[*]}        
+one two three
+[root@shell ~]# echo ${oldqq[@]}
+index1 index2 index3</code></pre>
 <p>查看数组所有的索引(下标)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# echo $&#123;!array[*]&#125;		</span><br><span class="line">0 1 2</span><br><span class="line">[root@shell ~]# echo $&#123;oldqq[*]&#125;</span><br><span class="line">www bbs zhihu</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-SHELL"><code class="language-SHELL">[root@shell ~]# echo ${!array[*]}        
+0 1 2
+[root@shell ~]# echo ${oldqq[*]}
+www bbs zhihu</code></pre>
 <p>查看数组的单个元素</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# echo $&#123;array[0]&#125;</span><br><span class="line">one</span><br><span class="line">[root@shell ~]# echo $&#123;array[2]&#125;</span><br><span class="line">three</span><br><span class="line">[root@shell ~]#  echo $&#123;oldqq[index1]&#125;</span><br><span class="line">www</span><br><span class="line">[root@shell ~]#  echo $&#123;oldqq[index3]&#125;</span><br><span class="line">zhihu</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# echo ${array[0]}
+one
+[root@shell ~]# echo ${array[2]}
+three
+[root@shell ~]#  echo ${oldqq[index1]}
+www
+[root@shell ~]#  echo ${oldqq[index3]}
+zhihu</code></pre>
 <h3 id="04-删除shell数组"><a href="#04-删除shell数组" class="headerlink" title="04. 删除shell数组"></a>04. 删除shell数组</h3><p>删除单个数组元素</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# unset array[3]	#&lt;= 去掉下标为3的数组元素</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">one two three</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# unset array[3]    #<= 去掉下标为3的数组元素 [root@shell ~]# echo ${array[*]} one two three< code></=></code></pre>
 <p>删除整个数组</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# unset array		 #&lt;= 删除整个数组</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;	#&lt;= 内容为空，说明删除成功</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# unset array         #<= 删除整个数组 [root@shell ~]# echo ${array[*]} #<="内容为空，说明删除成功" < code></=></code></pre>
+<h3 id="05-shell数组内容的截取和替换"><a href="#05-shell数组内容的截取和替换" class="headerlink" title="05. shell数组内容的截取和替换"></a>05. shell数组内容的截取和替换</h3><pre class=" language-shell"><code class="language-shell">[root@shell ~]# array=(a b c d e)    
+[root@shell ~]# echo ${!array[*]}
+0 1 2 3 4
+[root@shell ~]# echo ${array[*]}
+a b c d e
+[root@shell ~]# echo ${array[*]:1:3}    #<== 1 截取元素1到元素3(默认元素从0开始) b c d [root@shell ~]# array="($(echo" {a..g})) #<="=" 将变量的结果赋值给数组元素 echo ${array[*]} a e f g ${array[*] 1} 把数组中a替换为1，原数组未被真正修改 #数组也是变量，因此也适合变量的字串处理功能 abcdefg) abcabcabc abcdefg ${array[*]#*c} abcabc defg ${array[*]#*b} cabcabc cdefg ${array[*]##*b} ${array[*]%b*} abcabca ${array[*]%%b*} a< code></==></code></pre>
+<h3 id="06-shell数组循环打印"><a href="#06-shell数组循环打印" class="headerlink" title="06. shell数组循环打印"></a>06. shell数组循环打印</h3><pre class=" language-shell"><code class="language-shell">#通过C语言类型的for循环
+[root@shell scripts]# cat test01sh
+#!/bin/bash
+ipadd=(
+    10.0.0.11
+    10.0.0.22
+    10.0.0.33
+)
 
-<h3 id="05-shell数组内容的截取和替换"><a href="#05-shell数组内容的截取和替换" class="headerlink" title="05. shell数组内容的截取和替换"></a>05. shell数组内容的截取和替换</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# array=(a b c d e)	</span><br><span class="line">[root@shell ~]# echo $&#123;!array[*]&#125;</span><br><span class="line">0 1 2 3 4</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">a b c d e</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]:1:3&#125;	#&lt;== 截取元素1到元素3(默认元素从0开始)</span><br><span class="line">b c d</span><br><span class="line">[root@shell ~]# array=($(echo &#123;a..g&#125;))	#&lt;== 将变量的结果赋值给数组元素</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">a b c d e f g</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]/a/1&#125;	#&lt;== 把数组中a替换为1，原数组未被真正修改</span><br><span class="line">1 b c d e f g</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">数组也是变量，因此也适合变量的字串处理功能</span></span><br><span class="line">[root@shell ~]# array=(abcABCabc abcdefg)</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">abcABCabc abcdefg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]#*c&#125;</span><br><span class="line">ABCabc defg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]#*b&#125;</span><br><span class="line">cABCabc cdefg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]##*b&#125;</span><br><span class="line">c cdefg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]%b*&#125;</span><br><span class="line">abcABCa a</span><br><span class="line">[root@shell ~]# </span><br><span class="line">[root@shell ~]# echo $&#123;array[*]%%b*&#125;</span><br><span class="line">a a</span><br></pre></td></tr></table></figure>
-
-<h3 id="06-shell数组循环打印"><a href="#06-shell数组循环打印" class="headerlink" title="06. shell数组循环打印"></a>06. shell数组循环打印</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">通过C语言类型的<span class="keyword">for</span>循环</span></span><br><span class="line">[root@shell scripts]# cat test01sh</span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">ipadd=(</span><br><span class="line">    10.0.0.11</span><br><span class="line">    10.0.0.22</span><br><span class="line">    10.0.0.33</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">for((i=0;i&lt;$&#123;#ipadd[*]&#125;;i++))</span><br><span class="line">do</span><br><span class="line">    echo "$&#123;ipadd[$i]&#125;"</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">通过普通<span class="keyword">for</span>循环</span></span><br><span class="line">[root@shell scripts]# cat test02sh</span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">ipadd=(</span><br><span class="line">    10.0.0.11</span><br><span class="line">    10.0.0.22</span><br><span class="line">    10.0.0.33</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">for i in $&#123;ipadd[*]&#125;</span><br><span class="line">do</span><br><span class="line">    echo "$i"</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">两种打印结果是相同的，这里省略..</span></span><br><span class="line">[root@shell scripts]# sh test01h</span><br><span class="line">10.0.0.11</span><br><span class="line">10.0.0.22</span><br><span class="line">10.0.0.33</span><br></pre></td></tr></table></figure>
-
+for((i=0;i<${#ipadd[*]};i++)) do echo "${ipadd[$i]}" done #通过普通for循环 [root@shell scripts]# cat test02sh #! bin bash ipadd="(" 10.0.0.11 10.0.0.22 10.0.0.33 ) for i in ${ipadd[*]} "$i" #两种打印结果是相同的，这里省略.. sh test01h 10.0.0.33< code></${#ipadd[*]};i++))></code></pre>
 <h3 id="07-案例"><a href="#07-案例" class="headerlink" title="07. 案例:"></a>07. 案例:</h3><p> <strong>计算以下数据中性别出现的次数</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# cat sex.txt |column -t</span><br><span class="line">zhangsan     male</span><br><span class="line">lisi         female</span><br><span class="line">wangwu       male</span><br><span class="line">lili         male</span><br><span class="line">xx           female</span><br><span class="line">mayun        male</span><br><span class="line">mahuateng    male</span><br><span class="line">wangjianlin  male</span><br><span class="line">cxk          unknown</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-mysql"><code class="language-mysql">[root@shell ~]# cat sex.txt |column -t
+zhangsan     male
+lisi         female
+wangwu       male
+lili         male
+xx           female
+mayun        male
+mahuateng    male
+wangjianlin  male
+cxk          unknown</code></pre>
 <p><strong>编写的脚本</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@shell ~]# cat sex.sh</span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">for i in `awk '&#123;print $2&#125;' /root/sex.txt`</span><br><span class="line">do</span><br><span class="line">    declare -A sex</span><br><span class="line">    let sex[$i]++</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">for a in $&#123;!sex[*]&#125;</span><br><span class="line">do</span><br><span class="line">    echo "性别:$a 出现了:$&#123;sex[$a]&#125;"</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">脚本执行结果</span></span><br><span class="line">[root@shell ~]# sh sex.sh |column -t</span><br><span class="line">性别:male     出现了:6</span><br><span class="line">性别:unknown  出现了:1</span><br><span class="line">性别:female   出现了:2</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat sex.sh
+#!/bin/bash
+for i in `awk '{print $2}' /root/sex.txt`
+do
+    declare -A sex
+    let sex[$i]++
+done
 
+for a in ${!sex[*]}
+do
+    echo "性别:$a 出现了:${sex[$a]}"
+done
+
+#脚本执行结果
+[root@shell ~]# sh sex.sh |column -t
+性别:male     出现了:6
+性别:unknown  出现了:1
+性别:female   出现了:2</code></pre>
 
     </div>
 
@@ -421,7 +484,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/" title="shell数组的定义">http://yoursite.com/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/</a>
+    <a href="http://lpcsf.git.io/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/" title="shell数组的定义">http://lpcsf.git.io/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -456,6 +519,10 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/29/shell%20-%20day02/" rel="prev" title="shell - day02">
+                  shell - day02 <i class="fa fa-chevron-right"></i>
+                </a>
               
             </div>
           </div>
@@ -520,7 +587,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -593,14 +660,14 @@
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">7k</span>
+    <span title="站点总字数">11k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">12 分钟</span>
+    <span title="站点阅读时长">18 分钟</span>
 </div>
 
         

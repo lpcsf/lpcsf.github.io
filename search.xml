@@ -1,6 +1,408 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>shell - day02</title>
+    <url>/2019/10/29/shell%20-%20day02/</url>
+    <content><![CDATA[<p>[TOC]</p><h2 id="三、条件测试表达式-非if"><a href="#三、条件测试表达式-非if" class="headerlink" title="三、条件测试表达式 ( 非if)"></a>三、条件测试表达式 ( 非if)</h2><h3 id="1、shell的条件测试"><a href="#1、shell的条件测试" class="headerlink" title="1、shell的条件测试"></a>1、shell的条件测试</h3><blockquote>
+<p>是验证条件是否符合预期。以下是常用语法</p>
+</blockquote><table>
+<thead>
+<tr>
+<th align="left">条件测试语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">test &lt;测试表达式&gt;</td>
+<td>利用test命令测试条件表达式。</td>
+</tr>
+<tr>
+<td align="left">[ &lt;测试表达式&gt; ]</td>
+<td>通过[]测试条件表达式的方法，和test命令的用法相同，**注</td>
+</tr>
+<tr>
+<td align="left">[[ &lt;测试表达式&gt; ]]</td>
+<td>通过[[]]测试条件表达式的值的方法，是比test和[]更新的语法格式。</td>
+</tr>
+<tr>
+<td align="left">((测试表达式))</td>
+<td>通过<code>(())</code>进行测试条件表达式的方法，一般用于if语句里。</td>
+</tr>
+</tbody></table><a id="more"></a>
+
+
+<p> <strong>针对以上表有几个注意事项需要说明：</strong></p>
+<ul>
+<li><p>在双中括号[[]]中可以使用通配符（如*）等进行模式匹配，这是区别于其他几种语法的地方</p>
+</li>
+<li><p>&amp;&amp;、||、&gt;、&lt;等操作符可以应用到[[]]中，但不能应用于[]中，在[]中一般用-a、-o、-gt、-lt取代</p>
+</li>
+<li><p>对于整数的关系运算，也可以使用Shell的算术运算符(())</p>
+</li>
+</ul>
+<h3 id="2、文件测试表达式"><a href="#2、文件测试表达式" class="headerlink" title="2、文件测试表达式"></a>2、文件测试表达式</h3><p>对于文件测试表达式中，常用的文件测试操作符如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[ -f file ]，f的全称为file</td>
+<td>文件存在</td>
+</tr>
+<tr>
+<td>[ -e file ]，e的全称为exist</td>
+<td>文件(夹)存在</td>
+</tr>
+<tr>
+<td>[ -d dir ]，d的全称为directory</td>
+<td>是目录</td>
+</tr>
+<tr>
+<td>[ -L file ]，L的全称为link</td>
+<td>是软链接</td>
+</tr>
+<tr>
+<td>[ -s file ]，s的全称为size</td>
+<td>文件存在且非空</td>
+</tr>
+<tr>
+<td>[ -S file ]，S的全称为Socket</td>
+<td>文件是Socket文件</td>
+</tr>
+<tr>
+<td>[ -r file ]，r的全称为read</td>
+<td>文件可读</td>
+</tr>
+<tr>
+<td>[ -w file ]，w的全称为write</td>
+<td>文件可写</td>
+</tr>
+<tr>
+<td>[ -x file ]，x的全称为executable</td>
+<td>文件可执行</td>
+</tr>
+</tbody></table>
+<h3 id="3、字符串测试表达式"><a href="#3、字符串测试表达式" class="headerlink" title="3、字符串测试表达式"></a>3、字符串测试表达式</h3><blockquote>
+<p>比较两个字符是否相同、测试字符串的长度是否为0、字符串是否为NULL等，</p>
+</blockquote>
+<p> 常用的字符串操作符如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[ “$a” = “$b” ]</td>
+<td>测试字符串是否相等。用作赋值时两边不能有空格，用做判断时必须有空格。</td>
+</tr>
+<tr>
+<td>[ “$a” != “$b” ]</td>
+<td>测试字符串是否不相等</td>
+</tr>
+<tr>
+<td>[ -n “$str” ]</td>
+<td>判断字符串是否非空</td>
+</tr>
+<tr>
+<td>[ -z “$str” ]</td>
+<td>判断字符串是否为空</td>
+</tr>
+<tr>
+<td>[ $str ]</td>
+<td>判断字符串是否非空，类似于 -n</td>
+</tr>
+</tbody></table>
+<h3 id="4、整数二元比较操作符"><a href="#4、整数二元比较操作符" class="headerlink" title="4、整数二元比较操作符"></a>4、整数二元比较操作符</h3><p>整数二元比较操作符使用参考</p>
+<table>
+<thead>
+<tr>
+<th>在[]以及test中使用的比较符号</th>
+<th>在(())和[[]]中使用的比较符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-eq</td>
+<td>==或=</td>
+<td>相等的英文equal</td>
+</tr>
+<tr>
+<td>-ne</td>
+<td>!=</td>
+<td>不相等的英文not equal</td>
+</tr>
+<tr>
+<td>-gt</td>
+<td>&gt;</td>
+<td>大于的英文greater than</td>
+</tr>
+<tr>
+<td>-ge</td>
+<td>&gt;=</td>
+<td>大于等于的英文greater equal</td>
+</tr>
+<tr>
+<td>-lt</td>
+<td>&lt;</td>
+<td>小于的英文less than</td>
+</tr>
+<tr>
+<td>-le</td>
+<td>&lt;=</td>
+<td>小于等于的英文less equal</td>
+</tr>
+</tbody></table>
+<p><strong>注意：不推荐使用[[]]比较数字，因为在大小比较中，[[]]比较的是字符串的arscII码</strong></p>
+<h3 id="5、有关-、-、-用法小结"><a href="#5、有关-、-、-用法小结" class="headerlink" title="5、有关[]、[[]]、(())用法小结"></a>5、有关<code>[]</code>、<code>[[]]</code>、<code>(())</code>用法小结</h3><ul>
+<li>整数加双引号比较也可以</li>
+<li><code>[[]]</code> 中使用类似 <code>-eq</code> 的写法是正确的，而<code>[[]]</code> 中类似<code>&gt;</code>,<code>&lt;</code>的写法可能不对</li>
+<li><code>[[]]</code>中用类似<code>&gt;</code>、<code>&lt;</code>的写法语法没错（经过转义），但是逻辑结果不对，使用<code>=</code>、<code>!=</code>可以正确比较</li>
+<li><code>(())</code>中不能使用类似<code>-eq</code>的写法，可以使用类似<code>&gt;</code>、<code>&lt;</code>、<code>==</code>（=不可以）的写法</li>
+</ul>
+<h2 id="四、if-条件语句"><a href="#四、if-条件语句" class="headerlink" title="四、if 条件语句"></a>四、if 条件语句</h2><blockquote>
+<p>if条件语句，简单来说，其语义类似于汉语中的“如果…那么…”。<br>if语句是Linux运维人员在实际生产过程中使用的最频繁也是最重要的语句。  </p>
+</blockquote>
+<h3 id="4-1-单分支"><a href="#4-1-单分支" class="headerlink" title="4.1 单分支"></a>4.1 单分支</h3><blockquote>
+<p>if条件语句的单分支结构主体是“如果…那么…”</p>
+</blockquote>
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a><strong>语法</strong></h4><pre class=" language-shell"><code class="language-shell"># 第一种语法
+if <条件表达式>
+then
+    指令
+fi
+
+# 第二种语法
+if <条件表达式>;then
+    指令
+fi</条件表达式></条件表达式></code></pre>
+<blockquote>
+<p>上文中的“&lt;条件表达式&gt;”位置部分，可以使用test、[]、[[]]、(())等条件表达式</p>
+</blockquote>
+<h4 id="if-表达式嵌套"><a href="#if-表达式嵌套" class="headerlink" title="if 表达式嵌套"></a>if 表达式嵌套</h4><pre class=" language-shell"><code class="language-shell">if <条件表达式>;then
+    if <条件表达式>;then
+        指令
+    fi
+fi</条件表达式></条件表达式></code></pre>
+<h4 id="和之前条件表达式的关系"><a href="#和之前条件表达式的关系" class="headerlink" title="和之前条件表达式的关系"></a>和之前条件表达式的关系</h4><p>if条件语句相对于之前讲过的文件表达式[ -f “$file” ] &amp;&amp; echo 1等价于下面的if语句</p>
+<pre class=" language-shell"><code class="language-shell">if [ -f “file”]; then
+  echo 1
+fi</code></pre>
+<p>if条件语句的单分支，如果形象的使用中文解释的话，相当于一个女孩这么对你说：</p>
+<pre class=" language-shell"><code class="language-shell">如果 <你有房>;那么
+    我就嫁给你
+果如</你有房></code></pre>
+<h3 id="4-2-双分支"><a href="#4-2-双分支" class="headerlink" title="4.2 双分支"></a>4.2 双分支</h3><blockquote>
+<p>if条件语句的双分支结构主体则为“如果…那么…否则…”  </p>
+</blockquote>
+<h4 id="4-2-1-语法"><a href="#4-2-1-语法" class="headerlink" title="4.2.1 语法"></a>4.2.1 语法</h4><pre class=" language-shell"><code class="language-shell">if <条件表达式>;then
+    指令集1
+else
+    指令集2
+fi</条件表达式></code></pre>
+<h4 id="4-2-2-和之前条件表达式的关系"><a href="#4-2-2-和之前条件表达式的关系" class="headerlink" title="4.2.2 和之前条件表达式的关系"></a>4.2.2 和之前条件表达式的关系</h4><blockquote>
+<p>前文的文件测试表达式<code>[ -f “file” ] &amp;&amp; echo 1 || echo 0</code>就相当于下面的双分支的if条件语句</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell">if [ -f “file”]; then
+    echo 1
+else
+    echo 0
+fi</code></pre>
+<h3 id="4-3-多分支"><a href="#4-3-多分支" class="headerlink" title="4.3 多分支"></a>4.3 多分支</h3><blockquote>
+<p>if条件语句多分支结构主体为“如果…，那么…，否则如果…，那么… 否则如果…，那么…，否则</p>
+</blockquote>
+<h4 id="4-3-1多分支语法"><a href="#4-3-1多分支语法" class="headerlink" title="4.3.1多分支语法"></a>4.3.1多分支语法</h4><pre class=" language-shell"><code class="language-shell">if <条件表达式>;then
+    指令集1
+elif <条件表达式>;then
+    指令集2
+else
+    指令集3
+fi</条件表达式></条件表达式></code></pre>
+<h2 id="五、函数"><a href="#五、函数" class="headerlink" title="五、函数"></a>五、函数</h2><blockquote>
+<p>简单的说，函数的作用就是将程序里面多次被调用的相同代码组合起来(函数体)，并为其取个名字（函数名）。其他所有想重复调用这部分代码的地方，只需要调用这个名字就好了。</p>
+</blockquote>
+<h3 id="5-1-shell-函数的优势"><a href="#5-1-shell-函数的优势" class="headerlink" title="5.1 shell 函数的优势"></a>5.1 shell 函数的优势</h3><ul>
+<li>把相同的程序段定义成函数，可以减少整个程序的代码量，提高开发效率</li>
+<li>增加程序的可读，易读性，提升管理效率</li>
+<li>可以实习爱你程序功能模块化，使得程序具备通用型(可移植性)</li>
+</ul>
+<h3 id="5-2-函数语法"><a href="#5-2-函数语法" class="headerlink" title="5.2 函数语法"></a>5.2 函数语法</h3><h4 id="shell-函数的常见语法格式"><a href="#shell-函数的常见语法格式" class="headerlink" title="shell 函数的常见语法格式"></a>shell 函数的常见语法格式</h4><pre class=" language-shell"><code class="language-shell">function 函数名(){   # 推荐书写函数的方法（带括号）
+    指令集...
+    return n
+}</code></pre>
+<h4 id="简化写法-1"><a href="#简化写法-1" class="headerlink" title="简化写法 1"></a>简化写法 1</h4><pre class=" language-SHELL"><code class="language-SHELL">function 函数名 {   # 不推荐使用此方法（无括号，函数名和左花括号之间需要有空格。）
+    指令集...
+    return n
+}</code></pre>
+<h4 id="简化写法-2"><a href="#简化写法-2" class="headerlink" title="简化写法 2"></a>简化写法 2</h4><pre class=" language-shell"><code class="language-shell">函数名(){   # 不用function的方法
+    指令集...
+    return n
+}</code></pre>
+<h3 id="5-3-函数执行"><a href="#5-3-函数执行" class="headerlink" title="5.3 函数执行"></a>5.3 函数执行</h3><blockquote>
+<p>shell 函数分为最基本的函数和可以传参的函数俩种</p>
+<p>定义函数的代码段<strong>不会自动执行</strong>，<strong>在调用时执行</strong>；调用即在代码中给定函数并即可； </p>
+</blockquote>
+<h4 id="不带参数的函数"><a href="#不带参数的函数" class="headerlink" title="不带参数的函数"></a>不带参数的函数</h4><pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat demo1.sh 
+#!/bin/bash
+# 定义函数
+demoFUN(){
+    echo " the is shell !!!"
+}
+#调用函数
+demoFUN
+
+#  执行结果
+[root@shell ~]# sh demo2.sh 
+ the is shell !!!</code></pre>
+<h4 id="带参数的函数"><a href="#带参数的函数" class="headerlink" title="带参数的函数"></a>带参数的函数</h4><pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat func1.sh 
+#!/bin/bash
+function hello(){
+    echo "hello $1"
+}
+hello word！
+
+[root@shell ~]# sh func1.sh 
+hello word！</code></pre>
+<h2 id="六、case-语句"><a href="#六、case-语句" class="headerlink" title="六、case 语句"></a>六、case 语句</h2><p>  case结构条件句相当于多分支的if/elif/else条件句，但是它比这些条件句看起来更规范公正，常被用于实现系统服务启动脚本等企业应用场景中。</p>
+<h3 id="6-1-case-语法"><a href="#6-1-case-语法" class="headerlink" title="6.1 case 语法"></a>6.1 case 语法</h3><pre class=" language-shell"><code class="language-shell">case “变量” in 
+值1)
+    指令1...
+    ;;
+值2)
+    指令2...
+    ;;
+*)
+    指令3...
+esac</code></pre>
+<h3 id="6-2-case-语句流程图"><a href="#6-2-case-语句流程图" class="headerlink" title="6.2 case 语句流程图"></a>6.2 case 语句流程图</h3><p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5Cimage-20191027174808798.png" alt="image-20191027174808798"></p>
+<h3 id="6-3-case-实例"><a href="#6-3-case-实例" class="headerlink" title="6.3 case 实例"></a>6.3 case 实例</h3><pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat 1.sh 
+echo '输入 1 到 4 之间的数字:'
+read -p '你输入的数字为:' aNum
+case $aNum in
+    1)  echo '你选择了 1'
+    ;;
+    2)  echo '你选择了 2'
+    ;;
+    3)  echo '你选择了 3'
+    ;;
+    4)  echo '你选择了 4'
+    ;;
+    *)  echo '你没有输入 1 到 4 之间的数字'
+    ;;
+esac
+
+[root@shell ~]# sh 1.sh 
+输入 1 到 4 之间的数字:
+你输入的数字为:2
+你选择了 2
+[root@shell ~]# sh 1.sh 
+输入 1 到 4 之间的数字:
+你输入的数字为:6
+你没有输入 1 到 4 之间的数字</code></pre>
+<h2 id="七、while-循环"><a href="#七、while-循环" class="headerlink" title="七、while 循环"></a>七、while 循环</h2><p>while 循环又称之为死循环，常用于重复执行一条指令或一组指令，直到条件不满足停止。</p>
+<p>在企业中常用于守护进程或持续运行的程序，也有时候会用while来读取文件的每一行内容。</p>
+<p>while循环会对紧跟在while后的条件表达式判断，如果条件成立，就执行while里面的命令或语句，每次执行到done时候就重新判断while表达式是否真的成立，直到表达式不成立才退出。</p>
+<h4 id="7-1-while-语法"><a href="#7-1-while-语法" class="headerlink" title="7.1 while 语法"></a>7.1 while 语法</h4><pre class=" language-shell"><code class="language-shell"># 写法1
+while <条件表达式>
+do
+    指令
+done
+
+# 写法2
+while <条件表达式>;do
+    指令
+done</条件表达式></条件表达式></code></pre>
+<p>while 实例</p>
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat 3.sh 
+#!/bin/bash
+a=1
+while [ $a -lt 3 ]
+do
+  echo $a
+  let a=a+1
+done
+
+# 执行结果
+[root@shell ~]# sh 3.sh 
+1
+2</code></pre>
+<h3 id="7-2-while循环执行的流程图如下所示："><a href="#7-2-while循环执行的流程图如下所示：" class="headerlink" title="7.2 while循环执行的流程图如下所示："></a>7.2 while循环执行的流程图如下所示：</h3><p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5Cimage-20191027180048283.png" alt="image-20191027180048283"></p>
+<h3 id="7-3-while-按行读入文件"><a href="#7-3-while-按行读入文件" class="headerlink" title="7.3 while 按行读入文件"></a>7.3 while 按行读入文件</h3><blockquote>
+<p>while可以读取指定的文件，然后可以对每行数据进行自定义处理  </p>
+</blockquote>
+<ul>
+<li><code>&lt;</code> 重定向输入方式(推荐使用的方式)</li>
+</ul>
+<pre class=" language-sh"><code class="language-sh">while read line
+do
+    echo $line
+done < file</code></pre>
+<ul>
+<li>cat 方式 </li>
+</ul>
+<pre class=" language-shell"><code class="language-shell">cat file | while read line
+do 
+    echo $line
+done</code></pre>
+<p>while 按行读入 实例</p>
+<pre class=" language-shell"><code class="language-shell"># 文件内容
+[root@shell ~]# cat one.txt 
+1
+2
+3
+
+# 脚本内容
+[root@shell ~]# cat 4.sh 
+#!/bin/bash
+
+while read line 
+do
+  echo $line
+done < one.txt
+
+# 执行结果
+[root@shell ~]# sh 4.sh 
+1
+2
+3</code></pre>
+<h2 id="for-循环"><a href="#for-循环" class="headerlink" title="for 循环"></a>for 循环</h2><h3 id="for-语法"><a href="#for-语法" class="headerlink" title="for 语法"></a>for 语法</h3><ul>
+<li>第一种是 for 为变量取值行</li>
+</ul>
+<pre class=" language-shell"><code class="language-shell">for 变量名 in 变量取值列表
+do
+    指令
+done</code></pre>
+<ul>
+<li>第二种称之为C语言型for循环语句</li>
+</ul>
+<pre class=" language-shell"><code class="language-shell">for((exp1;exp2;exp3))
+do
+    指令
+done</code></pre>
+<p>for 语句举例</p>
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat for01.sh 
+#!/bin/bash
+for i in 1 2 3 
+do
+    echo "the is $i"
+done
+# 
+[root@shell ~]# sh for01.sh 
+the is 1
+the is 2
+the is 3
+
+
+[root@shell ~]# cat for02.sh 
+#!/bin/bash
+for (( i=0;i<5;i++ 0 1 )) do echo $i done [root@shell ~]# sh for02.sh 2< code></5;i++></code></pre>
+]]></content>
+  </entry>
+  <entry>
     <title>shell数组的定义</title>
     <url>/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/</url>
     <content><![CDATA[<h1 id="shell数组"><a href="#shell数组" class="headerlink" title="shell数组"></a>shell数组</h1><h3 id="01-shell数组的分类"><a href="#01-shell数组的分类" class="headerlink" title="01. shell数组的分类"></a>01. shell数组的分类</h3><ul>
@@ -8,44 +410,107 @@
 <li><strong>关联数组：可以使用字符作为索引</strong></li>
 </ul><h3 id="02-shell数组常用定义方式"><a href="#02-shell数组常用定义方式" class="headerlink" title="02. shell数组常用定义方式"></a>02. shell数组常用定义方式</h3><p>定义普通数组</p><a id="more"></a>
 
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义普通数组1：</span></span><br><span class="line">[root@shell ~]# array=(one two three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组2:</span></span><br><span class="line">[root@shell ~]# array=([0]=one [1]=two [2]=three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组3:</span></span><br><span class="line">[root@shell ~]# array[0]=one</span><br><span class="line">[root@shell ~]# array[1]=two</span><br><span class="line">[root@shell ~]# array[2]=three</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">不连续的索引赋值，双引号将里面的内容当成一个元素</span></span><br><span class="line">[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)</span><br><span class="line">[root@shell ~]# echo $&#123;array_1[*]&#125;</span><br><span class="line">oldboy name linux centos shell kvm</span><br><span class="line">[root@shell ~]# echo $&#123;!array_1[*]&#125;</span><br><span class="line">0 1 5 6 10</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">#定义普通数组1：
+[root@shell ~]# array=(one two three)
+#定义普通数组2:
+[root@shell ~]# array=([0]=one [1]=two [2]=three)
+#定义普通数组3:
+[root@shell ~]# array[0]=one
+[root@shell ~]# array[1]=two
+[root@shell ~]# array[2]=three
+
+#不连续的索引赋值，双引号将里面的内容当成一个元素
+[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)
+[root@shell ~]# echo ${array_1[*]}
+oldboy name linux centos shell kvm
+[root@shell ~]# echo ${!array_1[*]}
+0 1 5 6 10</code></pre>
 <p>定义管理数组</p>
 <blockquote>
 <p>创建关联数组前需要声明</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义关联数组1:</span></span><br><span class="line">[root@shell ~]# declare -A oldqq</span><br><span class="line">[root@shell ~]# oldqq=([index1]=www [index2]=bbs [index3]=zhihu)</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">定义关联数组2:</span></span><br><span class="line">[root@shell ~]# declare -A oldqq</span><br><span class="line">[root@shell ~]# oldqq[index1]=www </span><br><span class="line">[root@shell ~]# oldqq[index2]=bbs </span><br><span class="line">[root@shell ~]# oldqq[index3]=zhihu</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">#定义关联数组1:
+[root@shell ~]# declare -A oldqq
+[root@shell ~]# oldqq=([index1]=www [index2]=bbs [index3]=zhihu)
 
+#定义关联数组2:
+[root@shell ~]# declare -A oldqq
+[root@shell ~]# oldqq[index1]=www 
+[root@shell ~]# oldqq[index2]=bbs 
+[root@shell ~]# oldqq[index3]=zhihu</code></pre>
 <h3 id="03-查看shell数组"><a href="#03-查看shell数组" class="headerlink" title="03. 查看shell数组"></a>03. 查看shell数组</h3><p>查看所有定义的普通数组</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# declare -a</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-SHELL"><code class="language-SHELL">[root@shell ~]# declare -a</code></pre>
 <p>查看所有定义的关联数组</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# declare -A</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# declare -A</code></pre>
 <p>查看数组所有元素(*与@都可以)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;		</span><br><span class="line">one two three</span><br><span class="line">[root@shell ~]# echo $&#123;oldqq[@]&#125;</span><br><span class="line">index1 index2 index3</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# echo ${array[*]}        
+one two three
+[root@shell ~]# echo ${oldqq[@]}
+index1 index2 index3</code></pre>
 <p>查看数组所有的索引(下标)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# echo $&#123;!array[*]&#125;		</span><br><span class="line">0 1 2</span><br><span class="line">[root@shell ~]# echo $&#123;oldqq[*]&#125;</span><br><span class="line">www bbs zhihu</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-SHELL"><code class="language-SHELL">[root@shell ~]# echo ${!array[*]}        
+0 1 2
+[root@shell ~]# echo ${oldqq[*]}
+www bbs zhihu</code></pre>
 <p>查看数组的单个元素</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# echo $&#123;array[0]&#125;</span><br><span class="line">one</span><br><span class="line">[root@shell ~]# echo $&#123;array[2]&#125;</span><br><span class="line">three</span><br><span class="line">[root@shell ~]#  echo $&#123;oldqq[index1]&#125;</span><br><span class="line">www</span><br><span class="line">[root@shell ~]#  echo $&#123;oldqq[index3]&#125;</span><br><span class="line">zhihu</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# echo ${array[0]}
+one
+[root@shell ~]# echo ${array[2]}
+three
+[root@shell ~]#  echo ${oldqq[index1]}
+www
+[root@shell ~]#  echo ${oldqq[index3]}
+zhihu</code></pre>
 <h3 id="04-删除shell数组"><a href="#04-删除shell数组" class="headerlink" title="04. 删除shell数组"></a>04. 删除shell数组</h3><p>删除单个数组元素</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# unset array[3]	#&lt;= 去掉下标为3的数组元素</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">one two three</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# unset array[3]    #<= 去掉下标为3的数组元素 [root@shell ~]# echo ${array[*]} one two three< code></=></code></pre>
 <p>删除整个数组</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# unset array		 #&lt;= 删除整个数组</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;	#&lt;= 内容为空，说明删除成功</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# unset array         #<= 删除整个数组 [root@shell ~]# echo ${array[*]} #<="内容为空，说明删除成功" < code></=></code></pre>
+<h3 id="05-shell数组内容的截取和替换"><a href="#05-shell数组内容的截取和替换" class="headerlink" title="05. shell数组内容的截取和替换"></a>05. shell数组内容的截取和替换</h3><pre class=" language-shell"><code class="language-shell">[root@shell ~]# array=(a b c d e)    
+[root@shell ~]# echo ${!array[*]}
+0 1 2 3 4
+[root@shell ~]# echo ${array[*]}
+a b c d e
+[root@shell ~]# echo ${array[*]:1:3}    #<== 1 截取元素1到元素3(默认元素从0开始) b c d [root@shell ~]# array="($(echo" {a..g})) #<="=" 将变量的结果赋值给数组元素 echo ${array[*]} a e f g ${array[*] 1} 把数组中a替换为1，原数组未被真正修改 #数组也是变量，因此也适合变量的字串处理功能 abcdefg) abcabcabc abcdefg ${array[*]#*c} abcabc defg ${array[*]#*b} cabcabc cdefg ${array[*]##*b} ${array[*]%b*} abcabca ${array[*]%%b*} a< code></==></code></pre>
+<h3 id="06-shell数组循环打印"><a href="#06-shell数组循环打印" class="headerlink" title="06. shell数组循环打印"></a>06. shell数组循环打印</h3><pre class=" language-shell"><code class="language-shell">#通过C语言类型的for循环
+[root@shell scripts]# cat test01sh
+#!/bin/bash
+ipadd=(
+    10.0.0.11
+    10.0.0.22
+    10.0.0.33
+)
 
-<h3 id="05-shell数组内容的截取和替换"><a href="#05-shell数组内容的截取和替换" class="headerlink" title="05. shell数组内容的截取和替换"></a>05. shell数组内容的截取和替换</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# array=(a b c d e)	</span><br><span class="line">[root@shell ~]# echo $&#123;!array[*]&#125;</span><br><span class="line">0 1 2 3 4</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">a b c d e</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]:1:3&#125;	#&lt;== 截取元素1到元素3(默认元素从0开始)</span><br><span class="line">b c d</span><br><span class="line">[root@shell ~]# array=($(echo &#123;a..g&#125;))	#&lt;== 将变量的结果赋值给数组元素</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">a b c d e f g</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]/a/1&#125;	#&lt;== 把数组中a替换为1，原数组未被真正修改</span><br><span class="line">1 b c d e f g</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">数组也是变量，因此也适合变量的字串处理功能</span></span><br><span class="line">[root@shell ~]# array=(abcABCabc abcdefg)</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]&#125;</span><br><span class="line">abcABCabc abcdefg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]#*c&#125;</span><br><span class="line">ABCabc defg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]#*b&#125;</span><br><span class="line">cABCabc cdefg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]##*b&#125;</span><br><span class="line">c cdefg</span><br><span class="line">[root@shell ~]# echo $&#123;array[*]%b*&#125;</span><br><span class="line">abcABCa a</span><br><span class="line">[root@shell ~]# </span><br><span class="line">[root@shell ~]# echo $&#123;array[*]%%b*&#125;</span><br><span class="line">a a</span><br></pre></td></tr></table></figure>
-
-<h3 id="06-shell数组循环打印"><a href="#06-shell数组循环打印" class="headerlink" title="06. shell数组循环打印"></a>06. shell数组循环打印</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">通过C语言类型的<span class="keyword">for</span>循环</span></span><br><span class="line">[root@shell scripts]# cat test01sh</span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">ipadd=(</span><br><span class="line">    10.0.0.11</span><br><span class="line">    10.0.0.22</span><br><span class="line">    10.0.0.33</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">for((i=0;i&lt;$&#123;#ipadd[*]&#125;;i++))</span><br><span class="line">do</span><br><span class="line">    echo "$&#123;ipadd[$i]&#125;"</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">通过普通<span class="keyword">for</span>循环</span></span><br><span class="line">[root@shell scripts]# cat test02sh</span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">ipadd=(</span><br><span class="line">    10.0.0.11</span><br><span class="line">    10.0.0.22</span><br><span class="line">    10.0.0.33</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">for i in $&#123;ipadd[*]&#125;</span><br><span class="line">do</span><br><span class="line">    echo "$i"</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">两种打印结果是相同的，这里省略..</span></span><br><span class="line">[root@shell scripts]# sh test01h</span><br><span class="line">10.0.0.11</span><br><span class="line">10.0.0.22</span><br><span class="line">10.0.0.33</span><br></pre></td></tr></table></figure>
-
+for((i=0;i<${#ipadd[*]};i++)) do echo "${ipadd[$i]}" done #通过普通for循环 [root@shell scripts]# cat test02sh #! bin bash ipadd="(" 10.0.0.11 10.0.0.22 10.0.0.33 ) for i in ${ipadd[*]} "$i" #两种打印结果是相同的，这里省略.. sh test01h 10.0.0.33< code></${#ipadd[*]};i++))></code></pre>
 <h3 id="07-案例"><a href="#07-案例" class="headerlink" title="07. 案例:"></a>07. 案例:</h3><p> <strong>计算以下数据中性别出现的次数</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# cat sex.txt |column -t</span><br><span class="line">zhangsan     male</span><br><span class="line">lisi         female</span><br><span class="line">wangwu       male</span><br><span class="line">lili         male</span><br><span class="line">xx           female</span><br><span class="line">mayun        male</span><br><span class="line">mahuateng    male</span><br><span class="line">wangjianlin  male</span><br><span class="line">cxk          unknown</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-mysql"><code class="language-mysql">[root@shell ~]# cat sex.txt |column -t
+zhangsan     male
+lisi         female
+wangwu       male
+lili         male
+xx           female
+mayun        male
+mahuateng    male
+wangjianlin  male
+cxk          unknown</code></pre>
 <p><strong>编写的脚本</strong></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@shell ~]# cat sex.sh</span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">for i in `awk '&#123;print $2&#125;' /root/sex.txt`</span><br><span class="line">do</span><br><span class="line">    declare -A sex</span><br><span class="line">    let sex[$i]++</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">for a in $&#123;!sex[*]&#125;</span><br><span class="line">do</span><br><span class="line">    echo "性别:$a 出现了:$&#123;sex[$a]&#125;"</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">脚本执行结果</span></span><br><span class="line">[root@shell ~]# sh sex.sh |column -t</span><br><span class="line">性别:male     出现了:6</span><br><span class="line">性别:unknown  出现了:1</span><br><span class="line">性别:female   出现了:2</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">[root@shell ~]# cat sex.sh
+#!/bin/bash
+for i in `awk '{print $2}' /root/sex.txt`
+do
+    declare -A sex
+    let sex[$i]++
+done
 
+for a in ${!sex[*]}
+do
+    echo "性别:$a 出现了:${sex[$a]}"
+done
+
+#脚本执行结果
+[root@shell ~]# sh sex.sh |column -t
+性别:male     出现了:6
+性别:unknown  出现了:1
+性别:female   出现了:2</code></pre>
 ]]></content>
       <categories>
         <category>shell</category>
@@ -57,29 +522,105 @@
   <entry>
     <title>数值运算</title>
     <url>/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/</url>
-    <content><![CDATA[<p>数值运算</p><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">##只能做整数运算</span><br><span class="line">[root@shell ~]# expr 10 + 10</span><br><span class="line"><span class="number">20</span></span><br><span class="line">[root@shell ~]# expr 10 - 10</span><br><span class="line"><span class="number">0</span></span><br><span class="line">[root@shell ~]# expr 10 * 10</span><br><span class="line">expr: syntax error</span><br><span class="line">[root@shell ~]# expr 10 "*" 10</span><br><span class="line"><span class="number">100</span></span><br><span class="line">[root@shell ~]# expr 10 \* 10</span><br><span class="line"><span class="number">100</span></span><br><span class="line">[root@shell ~]# expr 10 / 10</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+    <content><![CDATA[<p>数值运算</p><pre class=" language-java"><code class="language-java">##只能做整数运算
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">+</span> <span class="token number">10</span>
+<span class="token number">20</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">-</span> <span class="token number">10</span>
+<span class="token number">0</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">*</span> <span class="token number">10</span>
+expr<span class="token operator">:</span> syntax error
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token string">"*"</span> <span class="token number">10</span>
+<span class="token number">100</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> \<span class="token operator">*</span> <span class="token number">10</span>
+<span class="token number">100</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">/</span> <span class="token number">10</span>
+<span class="token number">1</span></code></pre><a id="more"></a>
 
+<pre class=" language-java"><code class="language-java">#只能做整数运算
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let sum<span class="token operator">=</span><span class="token number">10</span><span class="token operator">*</span><span class="token number">10</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># echo $sum
+<span class="token number">100</span>
 
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">#只能做整数运算</span><br><span class="line">[root@shell ~]# let sum=10*10</span><br><span class="line">[root@shell ~]# echo $sum</span><br><span class="line"><span class="number">100</span></span><br><span class="line"></span><br><span class="line">[root@shell ~]# sum1=10</span><br><span class="line">[root@shell ~]# sum2=20</span><br><span class="line">[root@shell ~]# let $sum1+$sum2</span><br><span class="line">[root@shell ~]# let sum=$sum1+$sum2</span><br><span class="line">[root@shell ~]# echo $sum</span><br><span class="line"><span class="number">30</span></span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">只能做整数运算，运算符中速度最快的(大量数据时体现)</span></span><br><span class="line">[root@shell ~]# echo $((10+10))</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# echo $((1-10))</span><br><span class="line">-9</span><br><span class="line">[root@shell ~]# echo $((2*10))</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# echo $((2/10))</span><br><span class="line">0</span><br><span class="line">[root@shell ~]# echo $((10/2))</span><br><span class="line">5</span><br><span class="line">[root@shell ~]# echo $((10%2))</span><br><span class="line">0</span><br><span class="line">[root@shell ~]# echo $((2%10))</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">使用bc计算器，可以计算小数</span></span><br><span class="line">[root@shell ~]# echo 10*2|bc</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# echo 10-2|bc</span><br><span class="line">8</span><br><span class="line">[root@shell ~]# echo 10-2.5|bc</span><br><span class="line">7.5</span><br><span class="line">[root@shell ~]# echo 10*2.5|bc</span><br><span class="line">25.0</span><br><span class="line">[root@shell ~]# echo 10/2.5|bc</span><br><span class="line">4</span><br><span class="line">[root@shell ~]# echo 10+2.5|bc</span><br><span class="line">12.5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">awk进行整数和小数运算</span></span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10-2&#125;'</span><br><span class="line">8</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10+2&#125;'</span><br><span class="line">12</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10*2&#125;'</span><br><span class="line">20</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10/2&#125;'</span><br><span class="line">5</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10/2.5&#125;'</span><br><span class="line">4</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10*2.5&#125;'</span><br><span class="line">25</span><br><span class="line">[root@shell ~]# awk 'BEGIN&#123;print 10-2.5&#125;'</span><br><span class="line">7.5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">python运算整数和小数</span></span><br><span class="line">[root@shell ~]# python</span><br><span class="line">Python 2.7.5 (default, Oct 30 2018, 23:45:53) </span><br><span class="line">[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux2</span><br><span class="line">Type "help", "copyright", "credits" or "license" for more information.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10+2.5</span></span><br><span class="line">12.5</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10-2.5</span></span><br><span class="line">7.5</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10/2.5</span></span><br><span class="line">4.0</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 10*2.5</span></span><br><span class="line">25.0</span><br></pre></td></tr></table></figure>
-
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># sum1<span class="token operator">=</span><span class="token number">10</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># sum2<span class="token operator">=</span><span class="token number">20</span>
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let $sum1<span class="token operator">+</span>$sum2
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let sum<span class="token operator">=</span>$sum1<span class="token operator">+</span>$sum2
+<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># echo $sum
+<span class="token number">30</span></code></pre>
+<pre class=" language-shell"><code class="language-shell">#只能做整数运算，运算符中速度最快的(大量数据时体现)
+[root@shell ~]# echo $((10+10))
+20
+[root@shell ~]# echo $((1-10))
+-9
+[root@shell ~]# echo $((2*10))
+20
+[root@shell ~]# echo $((2/10))
+0
+[root@shell ~]# echo $((10/2))
+5
+[root@shell ~]# echo $((10%2))
+0
+[root@shell ~]# echo $((2%10))
+2</code></pre>
+<pre class=" language-shell"><code class="language-shell">#使用bc计算器，可以计算小数
+[root@shell ~]# echo 10*2|bc
+20
+[root@shell ~]# echo 10-2|bc
+8
+[root@shell ~]# echo 10-2.5|bc
+7.5
+[root@shell ~]# echo 10*2.5|bc
+25.0
+[root@shell ~]# echo 10/2.5|bc
+4
+[root@shell ~]# echo 10+2.5|bc
+12.5</code></pre>
+<pre class=" language-shell"><code class="language-shell">#awk进行整数和小数运算
+[root@shell ~]# awk 'BEGIN{print 10-2}'
+8
+[root@shell ~]# awk 'BEGIN{print 10+2}'
+12
+[root@shell ~]# awk 'BEGIN{print 10*2}'
+20
+[root@shell ~]# awk 'BEGIN{print 10/2}'
+5
+[root@shell ~]# awk 'BEGIN{print 10/2.5}'
+4
+[root@shell ~]# awk 'BEGIN{print 10*2.5}'
+25
+[root@shell ~]# awk 'BEGIN{print 10-2.5}'
+7.5</code></pre>
+<pre class=" language-shell"><code class="language-shell">#python运算整数和小数
+[root@shell ~]# python
+Python 2.7.5 (default, Oct 30 2018, 23:45:53) 
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 10+2.5
+12.5
+>>> 10-2.5
+7.5
+>>> 10/2.5
+4.0
+>>> 10*2.5
+25.0</code></pre>
 <p>条件表达式</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[ -f file ]	是否为文件</span><br><span class="line">[ -d dir ]  是否为目录</span><br><span class="line">[ -e file ] 是否存在</span><br><span class="line">[ -r fiel]	文件是有可读</span><br><span class="line">[ -w fiel]	文件是有可写</span><br><span class="line">[ -x fiel]	文件是可执行</span><br></pre></td></tr></table></figure>
-
+<pre class=" language-shell"><code class="language-shell">[ -f file ]    是否为文件
+[ -d dir ]  是否为目录
+[ -e file ] 是否存在
+[ -r fiel]    文件是有可读
+[ -w fiel]    文件是有可写
+[ -x fiel]    文件是可执行</code></pre>
 <p>数值表达式：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[ 整数1 比较符 整数2 ]</span><br><span class="line">[ 整数1 -eq 整数2 ] 等于</span><br><span class="line">[ 整数1 -ne 整数2 ] 不等于</span><br><span class="line">[ 整数1 -lt 整数2 ] 小于</span><br><span class="line">[ 整数1 -le 整数2 ] 小于等于</span><br><span class="line">[ 整数1 -gt 整数2 ] 大于</span><br><span class="line">[ 整数1 -ge 整数2 ] 小大于等于 </span><br><span class="line"></span><br><span class="line">(())  [[]]  = != &gt; &gt;= &lt; &lt;=</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell"> [ 整数1 比较符 整数2 ]
+ [ 整数1 -eq 整数2 ] 等于
+ [ 整数1 -ne 整数2 ] 不等于
+ [ 整数1 -lt 整数2 ] 小于
+ [ 整数1 -le 整数2 ] 小于等于
+ [ 整数1 -gt 整数2 ] 大于
+ [ 整数1 -ge 整数2 ] 小大于等于 
 
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for ((i=1;i&lt;=9;i++ ));do</span><br><span class="line">    for ((j=1;j&lt;=i;j++));do</span><br><span class="line">        echo -ne "$j\t"</span><br><span class="line">    done</span><br><span class="line">    echo</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
+ (())  [[]]  = != > >= < <=< code></=<></code></pre>
+<pre class=" language-shell"><code class="language-shell">for ((i=1;i<=9;i++ ));do for ((j="1;j<=i;j++));do" echo -ne "$j\t" done done< code></=9;i++></code></pre>
 ]]></content>
   </entry>
   <entry>
@@ -105,16 +646,35 @@
 <p>常规优化：关闭selinux 和firewalld</p>
 <p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png" alt="1567433525738"></p>
 <p>安装软件</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install libvirt virt-install qemu-kvm -y</span><br><span class="line"></span><br><span class="line">libvirt 作用：虚拟机的管理软件</span><br><span class="line">libvirt: kvm,xen,qemu,lxc....</span><br><span class="line"></span><br><span class="line">virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具</span><br><span class="line">qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</span><br></pre></td></tr></table></figure>
+<pre class=" language-shell"><code class="language-shell">yum install libvirt virt-install qemu-kvm -y
 
+libvirt 作用：虚拟机的管理软件
+libvirt: kvm,xen,qemu,lxc....
+
+virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具
+qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</code></pre>
 <h4 id="安装一台kvm虚拟机"><a href="#安装一台kvm虚拟机" class="headerlink" title="安装一台kvm虚拟机"></a>安装一台kvm虚拟机</h4><h5 id="安装VNC-Viewer"><a href="#安装VNC-Viewer" class="headerlink" title="安装VNC-Viewer"></a>安装VNC-Viewer</h5><p>PC电脑端安装VNC</p>
 <blockquote>
 <p>VNC 远程控制的软件，与操作系统无关，因此可以跨平台使用。</p>
 </blockquote>
-<h5 id="启动libvirtd"><a href="#启动libvirtd" class="headerlink" title="启动libvirtd"></a>启动libvirtd</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">systemctl start libvirtd.service</span><br><span class="line">systemctl status libvirtd.service</span><br></pre></td></tr></table></figure>
+<h5 id="启动libvirtd"><a href="#启动libvirtd" class="headerlink" title="启动libvirtd"></a>启动libvirtd</h5><pre><code>systemctl start libvirtd.service
+systemctl status libvirtd.service</code></pre><h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><pre class=" language-shell"><code class="language-shell">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --
+vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso
+--network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole
 
-<h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --</span><br><span class="line">vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso</span><br><span class="line">--network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line">--virt-type kvm 	虚拟化的类型(qemu)</span><br><span class="line">--os-type=linux 	系统类型</span><br><span class="line">--os-variant rhel7 	系统版本</span><br><span class="line">--name centos7 	    虚拟机的名字</span><br><span class="line">--memory 1024	    虚拟机的内存</span><br><span class="line">--vcpus 1 		    虚拟cpu的核数</span><br><span class="line">--disk /opt/centos2.raw,format=raw,size=10	 设置类型与磁盘大小</span><br><span class="line">--cdrom /opt/CentOS-7-x86_64-DVD-1708.iso	 使用的光盘镜像</span><br><span class="line">--network network=default 					使用默认NAT的网络</span><br><span class="line">--graphics vnc,listen=0.0.0.0</span><br><span class="line">--noautoconsole</span><br></pre></td></tr></table></figure>
 
+参数说明：
+--virt-type kvm     虚拟化的类型(qemu)
+--os-type=linux     系统类型
+--os-variant rhel7     系统版本
+--name centos7         虚拟机的名字
+--memory 1024        虚拟机的内存
+--vcpus 1             虚拟cpu的核数
+--disk /opt/centos2.raw,format=raw,size=10     设置类型与磁盘大小
+--cdrom /opt/CentOS-7-x86_64-DVD-1708.iso     使用的光盘镜像
+--network network=default                     使用默认NAT的网络
+--graphics vnc,listen=0.0.0.0
+--noautoconsole</code></pre>
 <blockquote>
 <p>选择 第一个，按下<code>TAB</code>键，修改内网名称</p>
 <p>net.ifname=0 biosdevname=0</p>
@@ -125,39 +685,26 @@
 <p>为了提高虚拟机性能，不用创建swap分区</p>
 </blockquote>
 <h5 id><a href="#" class="headerlink" title></a><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567436030501.png" alt="1567436030501"></h5><h4 id="kvm-虚拟机的virsh日常管理和配置"><a href="#kvm-虚拟机的virsh日常管理和配置" class="headerlink" title="kvm 虚拟机的virsh日常管理和配置"></a>kvm 虚拟机的virsh日常管理和配置</h4><p>列表 list</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">virsh list    		# 列表(只运行或挂载)</span><br><span class="line">virsh list --all	# 查看所有虚拟机</span><br></pre></td></tr></table></figure>
+<pre><code>virsh list            # 列表(只运行或挂载)
+virsh list --all    # 查看所有虚拟机</code></pre><p>开机 start</p>
+<pre><code>virsh start centos7</code></pre><p>关机 shutdown</p>
+<pre><code>virsh shutdown centos7</code></pre><p>拔电源关机 destroy</p>
+<pre><code>virsh destroy centos7</code></pre><p>导出配置文件  dumpxml</p>
+<pre><code>virsh dumpxml centos7  # 只打印到桌面
 
-<p>开机 start</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">virsh start centos7</span><br></pre></td></tr></table></figure>
-
-<p>关机 shutdown</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">virsh shutdown centos7</span><br></pre></td></tr></table></figure>
-
-<p>拔电源关机 destroy</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">virsh destroy centos7</span><br></pre></td></tr></table></figure>
-
-<p>导出配置文件  dumpxml</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">virsh dumpxml centos7  # 只打印到桌面</span><br><span class="line"></span><br><span class="line">virsh dumpxml centos7 &gt; centos7.off.xml</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
+virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>]]></content>
   </entry>
   <entry>
     <title>Hello World</title>
     <url>/2019/10/28/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><a id="more"></a>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><pre class=" language-bash"><code class="language-bash">$ hexo new <span class="token string">"My New Post"</span></code></pre>
 <p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><pre class=" language-bash"><code class="language-bash">$ hexo server</code></pre>
 <p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><pre class=" language-bash"><code class="language-bash">$ hexo generate</code></pre>
 <p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><pre class=" language-bash"><code class="language-bash">$ hexo deploy</code></pre>
 <p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
 ]]></content>
   </entry>

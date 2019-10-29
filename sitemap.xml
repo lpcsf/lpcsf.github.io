@@ -2,49 +2,56 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/tags/index.html</loc>
+    <loc>http://lpcsf.git.io/tags/index.html</loc>
     
     <lastmod>2019-10-29T12:15:33.320Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/10/29/shell%25E6%2595%25B0%25E7%25BB%2584%25E7%259A%2584%25E5%25AE%259A%25E4%25B9%2589/</loc>
+    <loc>http://lpcsf.git.io/2019/10/29/shell%25E6%2595%25B0%25E7%25BB%2584%25E7%259A%2584%25E5%25AE%259A%25E4%25B9%2589/</loc>
     
     <lastmod>2019-10-29T12:14:07.221Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/10/29/%25E6%2595%25B0%25E5%2580%25BC%25E8%25BF%2590%25E7%25AE%2597/</loc>
+    <loc>http://lpcsf.git.io/2019/10/29/%25E6%2595%25B0%25E5%2580%25BC%25E8%25BF%2590%25E7%25AE%2597/</loc>
     
     <lastmod>2019-10-29T12:07:50.660Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/categories/index.html</loc>
+    <loc>http://lpcsf.git.io/categories/index.html</loc>
     
     <lastmod>2019-10-29T12:00:18.970Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/about/index.html</loc>
+    <loc>http://lpcsf.git.io/about/index.html</loc>
     
     <lastmod>2019-10-28T14:40:04.901Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/10/28/hello-world/</loc>
+    <loc>http://lpcsf.git.io/2019/10/28/hello-world/</loc>
     
     <lastmod>2019-10-28T13:06:03.954Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/10/28/%25E4%25BB%2580%25E4%25B9%2588%25E6%2598%25AF%25E4%25BA%2591%25E8%25AE%25A1%25E7%25AE%2597/</loc>
+    <loc>http://lpcsf.git.io/2019/10/29/shell%2520-%2520day02/</loc>
+    
+    <lastmod>2019-10-27T12:43:31.821Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://lpcsf.git.io/2019/10/28/%25E4%25BB%2580%25E4%25B9%2588%25E6%2598%25AF%25E4%25BA%2591%25E8%25AE%25A1%25E7%25AE%2597/</loc>
     
     <lastmod>2019-09-05T01:59:07.999Z</lastmod>
     
