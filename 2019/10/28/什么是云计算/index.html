@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.2">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.2">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.2" color="#222">
+  <link rel="alternate" href="/atom.xml" title="ONE" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.2">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="什么是云计算简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！云计算的服务类型IAAS 基础设施及服务     虚拟机&#x2F;ecs&#x2F;openstack PAAS 平台及服务           PHP&#x2F;JAVA&#x2F;docker容器  SAAS 软件及服务            企业邮箱服务&#x2F;CND服务&#x2F;RDS数据（开发+运维）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云计算基础">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;28&#x2F;%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97&#x2F;index.html">
+<meta property="og:site_name" content="ONE">
+<meta property="og:description" content="什么是云计算简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！云计算的服务类型IAAS 基础设施及服务     虚拟机&#x2F;ecs&#x2F;openstack PAAS 平台及服务           PHP&#x2F;JAVA&#x2F;docker容器  SAAS 软件及服务            企业邮箱服务&#x2F;CND服务&#x2F;RDS数据（开发+运维）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png">
+<meta property="og:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567435894967.png">
+<meta property="og:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567436030501.png">
+<meta property="og:updated_time" content="2019-09-05T01:59:07.999Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>云计算基础 | ONE</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ONE</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+    
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+          <i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ONE_lpc">
+      <meta itemprop="description" content="人一能之,己百之;人十能之,己千之!">
+      <meta itemprop="image" content="/images/minion.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            云计算基础
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-28 21:53:01" itemprop="dateCreated datePublished" datetime="2019-10-28T21:53:01+08:00">2019-10-28</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-05 09:59:07" itemprop="dateModified" datetime="2019-09-05T09:59:07+08:00">2019-09-05</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.7k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>3 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="什么是云计算"><a href="#什么是云计算" class="headerlink" title="什么是云计算"></a>什么是云计算</h3><p>简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！</p><h3 id="云计算的服务类型"><a href="#云计算的服务类型" class="headerlink" title="云计算的服务类型"></a>云计算的服务类型</h3><p>IAAS 基础设施及服务     虚拟机/ecs/openstack </p><p>PAAS 平台及服务           PHP/JAVA/docker容器  </p><p>SAAS 软件及服务            企业邮箱服务/CND服务/RDS数据（开发+运维）</p><a id="more"></a>
+
+
+
+<h3 id="为什么要用云计算"><a href="#为什么要用云计算" class="headerlink" title="为什么要用云计算"></a>为什么要用云计算</h3><p>提高资源利用率</p>
+<p>大幅减少前期投资</p>
+<p>更加灵活和自动化</p>
+<p>具有更好的安全性</p>
+<h3 id="云计算基础-–-KVM虚拟化"><a href="#云计算基础-–-KVM虚拟化" class="headerlink" title="云计算基础 – KVM虚拟化"></a>云计算基础 – KVM虚拟化</h3><h4 id="什么是虚拟化？"><a href="#什么是虚拟化？" class="headerlink" title="什么是虚拟化？"></a>什么是虚拟化？</h4><p>简单的说，是指通过虚拟化技术将一台计算机虚拟为多台计算机，每台虚拟的计算都可以运行不桶的操作系统，每台虚拟机之间都是完全隔离，互不影响的。</p>
+<h4 id="虚拟化软件的差别"><a href="#虚拟化软件的差别" class="headerlink" title="虚拟化软件的差别"></a>虚拟化软件的差别</h4><p>*<em>qemu *</em>：软件纯模拟，全虚拟化软件。特别慢，AIX，兼容性好</p>
+<p><strong>xen</strong>     ：性能特别好，需要使用专门修改之后的内核，兼容性差！</p>
+<p>*<em>KVM *</em>  ：全虚拟机，有硬件支持CPU，基于内核，而且不需要使用专门的内核</p>
+<h4 id="安装KVM虚拟化管理工具"><a href="#安装KVM虚拟化管理工具" class="headerlink" title="安装KVM虚拟化管理工具"></a>安装KVM虚拟化管理工具</h4><p>环境说明：</p>
+<p>vmware 宿主机 kvm虚拟机</p>
+<p>操作系统：centOS 7.6</p>
+<p>IP规划：10.0.0.11</p>
+<p>内存4G，CPU开启虚拟化</p>
+<p>常规优化：关闭selinux 和firewalld</p>
+<p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png" alt="1567433525738"></p>
+<p>安装软件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">yum install libvirt virt-install qemu-kvm -y</span><br><span class="line"></span><br><span class="line">libvirt 作用：虚拟机的管理软件</span><br><span class="line">libvirt: kvm,xen,qemu,lxc....</span><br><span class="line"></span><br><span class="line">virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具</span><br><span class="line">qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装一台kvm虚拟机"><a href="#安装一台kvm虚拟机" class="headerlink" title="安装一台kvm虚拟机"></a>安装一台kvm虚拟机</h4><h5 id="安装VNC-Viewer"><a href="#安装VNC-Viewer" class="headerlink" title="安装VNC-Viewer"></a>安装VNC-Viewer</h5><p>PC电脑端安装VNC</p>
+<blockquote>
+<p>VNC 远程控制的软件，与操作系统无关，因此可以跨平台使用。</p>
+</blockquote>
+<h5 id="启动libvirtd"><a href="#启动libvirtd" class="headerlink" title="启动libvirtd"></a>启动libvirtd</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start libvirtd.service</span><br><span class="line">systemctl status libvirtd.service</span><br></pre></td></tr></table></figure>
+
+<h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --</span><br><span class="line">vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso</span><br><span class="line">--network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">参数说明：</span><br><span class="line">--virt-type kvm 	虚拟化的类型(qemu)</span><br><span class="line">--os-type=linux 	系统类型</span><br><span class="line">--os-variant rhel7 	系统版本</span><br><span class="line">--name centos7 	    虚拟机的名字</span><br><span class="line">--memory 1024	    虚拟机的内存</span><br><span class="line">--vcpus 1 		    虚拟cpu的核数</span><br><span class="line">--disk /opt/centos2.raw,format=raw,size=10	 设置类型与磁盘大小</span><br><span class="line">--cdrom /opt/CentOS-7-x86_64-DVD-1708.iso	 使用的光盘镜像</span><br><span class="line">--network network=default 					使用默认NAT的网络</span><br><span class="line">--graphics vnc,listen=0.0.0.0</span><br><span class="line">--noautoconsole</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>选择 第一个，按下<code>TAB</code>键，修改内网名称</p>
+<p>net.ifname=0 biosdevname=0</p>
+</blockquote>
+<p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567435894967.png" alt="1567435894967"></p>
+<blockquote>
+<p>云主机都没有swap分区</p>
+<p>为了提高虚拟机性能，不用创建swap分区</p>
+</blockquote>
+<h5 id><a href="#" class="headerlink" title></a><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567436030501.png" alt="1567436030501"></h5><h4 id="kvm-虚拟机的virsh日常管理和配置"><a href="#kvm-虚拟机的virsh日常管理和配置" class="headerlink" title="kvm 虚拟机的virsh日常管理和配置"></a>kvm 虚拟机的virsh日常管理和配置</h4><p>列表 list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virsh list    		# 列表(只运行或挂载)</span><br><span class="line">virsh list --all	# 查看所有虚拟机</span><br></pre></td></tr></table></figure>
+
+<p>开机 start</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh start centos7</span><br></pre></td></tr></table></figure>
+
+<p>关机 shutdown</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh shutdown centos7</span><br></pre></td></tr></table></figure>
+
+<p>拔电源关机 destroy</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh destroy centos7</span><br></pre></td></tr></table></figure>
+
+<p>导出配置文件  dumpxml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">virsh dumpxml centos7  # 只打印到桌面</span><br><span class="line"></span><br><span class="line">virsh dumpxml centos7 &gt; centos7.off.xml</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ONE_lpc
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/" title="云计算基础">http://yoursite.com/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/28/hello-world/" rel="next" title="Hello World">
+                  <i class="fa fa-chevron-left"></i> Hello World
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/" rel="prev" title="数值运算">
+                  数值运算 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是云计算"><span class="nav-number">1.</span> <span class="nav-text">什么是云计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云计算的服务类型"><span class="nav-number">2.</span> <span class="nav-text">云计算的服务类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用云计算"><span class="nav-number">3.</span> <span class="nav-text">为什么要用云计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云计算基础-–-KVM虚拟化"><span class="nav-number">4.</span> <span class="nav-text">云计算基础 – KVM虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是虚拟化？"><span class="nav-number">4.1.</span> <span class="nav-text">什么是虚拟化？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟化软件的差别"><span class="nav-number">4.2.</span> <span class="nav-text">虚拟化软件的差别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装KVM虚拟化管理工具"><span class="nav-number">4.3.</span> <span class="nav-text">安装KVM虚拟化管理工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装一台kvm虚拟机"><span class="nav-number">4.4.</span> <span class="nav-text">安装一台kvm虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装VNC-Viewer"><span class="nav-number">4.4.1.</span> <span class="nav-text">安装VNC-Viewer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#启动libvirtd"><span class="nav-number">4.4.2.</span> <span class="nav-text">启动libvirtd</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#将-CentOS-7-6-上传到-opt-目录下"><span class="nav-number">4.4.3.</span> <span class="nav-text">将 CentOS 7.6 上传到/opt 目录下</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#开始安装虚拟机操作系统"><span class="nav-number">4.4.4.</span> <span class="nav-text">开始安装虚拟机操作系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#null"><span class="nav-number">4.4.5.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kvm-虚拟机的virsh日常管理和配置"><span class="nav-number">4.5.</span> <span class="nav-text">kvm 虚拟机的virsh日常管理和配置</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/minion.png"
+      alt="ONE_lpc">
+  <p class="site-author-name" itemprop="name">ONE_lpc</p>
+  <div class="site-description" itemprop="description">人一能之,己百之;人十能之,己千之!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ONE</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">7k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">12 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.2"></script><script src="/js/motion.js?v=7.4.2"></script>
+<script src="/js/schemes/pisces.js?v=7.4.2"></script>
+
+<script src="/js/next-boot.js?v=7.4.2"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.4.2"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
