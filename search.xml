@@ -6,9 +6,9 @@
     <content><![CDATA[<h1 id="shell数组"><a href="#shell数组" class="headerlink" title="shell数组"></a>shell数组</h1><h3 id="01-shell数组的分类"><a href="#01-shell数组的分类" class="headerlink" title="01. shell数组的分类"></a>01. shell数组的分类</h3><ul>
 <li><strong>普通数组：只能以数字作为索引(也称之为下标)</strong></li>
 <li><strong>关联数组：可以使用字符作为索引</strong></li>
-</ul><h3 id="02-shell数组常用定义方式"><a href="#02-shell数组常用定义方式" class="headerlink" title="02. shell数组常用定义方式"></a>02. shell数组常用定义方式</h3><p>定义普通数组</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义普通数组1：</span></span><br><span class="line">[root@shell ~]# array=(one two three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组2:</span></span><br><span class="line">[root@shell ~]# array=([0]=one [1]=two [2]=three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组3:</span></span><br><span class="line">[root@shell ~]# array[0]=one</span><br><span class="line">[root@shell ~]# array[1]=two</span><br><span class="line">[root@shell ~]# array[2]=three</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">不连续的索引赋值，双引号将里面的内容当成一个元素</span></span><br><span class="line">[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)</span><br><span class="line">[root@shell ~]# echo $&#123;array_1[*]&#125;</span><br><span class="line">oldboy name linux centos shell kvm</span><br><span class="line">[root@shell ~]# echo $&#123;!array_1[*]&#125;</span><br><span class="line">0 1 5 6 10</span><br></pre></td></tr></table></figure><a id="more"></a>
+</ul><h3 id="02-shell数组常用定义方式"><a href="#02-shell数组常用定义方式" class="headerlink" title="02. shell数组常用定义方式"></a>02. shell数组常用定义方式</h3><p>定义普通数组</p><a id="more"></a>
 
-
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义普通数组1：</span></span><br><span class="line">[root@shell ~]# array=(one two three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组2:</span></span><br><span class="line">[root@shell ~]# array=([0]=one [1]=two [2]=three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组3:</span></span><br><span class="line">[root@shell ~]# array[0]=one</span><br><span class="line">[root@shell ~]# array[1]=two</span><br><span class="line">[root@shell ~]# array[2]=three</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">不连续的索引赋值，双引号将里面的内容当成一个元素</span></span><br><span class="line">[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)</span><br><span class="line">[root@shell ~]# echo $&#123;array_1[*]&#125;</span><br><span class="line">oldboy name linux centos shell kvm</span><br><span class="line">[root@shell ~]# echo $&#123;!array_1[*]&#125;</span><br><span class="line">0 1 5 6 10</span><br></pre></td></tr></table></figure>
 <p>定义管理数组</p>
 <blockquote>
 <p>创建关联数组前需要声明</p>
@@ -85,9 +85,9 @@
   <entry>
     <title>云计算基础</title>
     <url>/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/</url>
-    <content><![CDATA[<h3 id="什么是云计算"><a href="#什么是云计算" class="headerlink" title="什么是云计算"></a>什么是云计算</h3><p>简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！</p><h3 id="云计算的服务类型"><a href="#云计算的服务类型" class="headerlink" title="云计算的服务类型"></a>云计算的服务类型</h3><p>IAAS 基础设施及服务     虚拟机/ecs/openstack </p><p>PAAS 平台及服务           PHP/JAVA/docker容器  </p><a id="more"></a>
+    <content><![CDATA[<h3 id="什么是云计算"><a href="#什么是云计算" class="headerlink" title="什么是云计算"></a>什么是云计算</h3><p>简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！</p><h3 id="云计算的服务类型"><a href="#云计算的服务类型" class="headerlink" title="云计算的服务类型"></a>云计算的服务类型</h3><p>IAAS 基础设施及服务     虚拟机/ecs/openstack </p><a id="more"></a>
 
-
+<p>PAAS 平台及服务           PHP/JAVA/docker容器  </p>
 <p>SAAS 软件及服务            企业邮箱服务/CND服务/RDS数据（开发+运维）</p>
 <h3 id="为什么要用云计算"><a href="#为什么要用云计算" class="headerlink" title="为什么要用云计算"></a>为什么要用云计算</h3><p>提高资源利用率</p>
 <p>大幅减少前期投资</p>

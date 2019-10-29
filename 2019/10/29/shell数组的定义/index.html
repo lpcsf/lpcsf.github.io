@@ -58,13 +58,13 @@
   };
 </script>
 
-  <meta name="description" content="shell数组01. shell数组的分类 普通数组：只能以数字作为索引(也称之为下标) 关联数组：可以使用字符作为索引 02. shell数组常用定义方式定义普通数组123456789101112131415#定义普通数组1：[root@shell ~]# array=(one two three)#定义普通数组2:[root@shell ~]# array=([0]=one [1]=two [">
+  <meta name="description" content="shell数组01. shell数组的分类 普通数组：只能以数字作为索引(也称之为下标) 关联数组：可以使用字符作为索引 02. shell数组常用定义方式定义普通数组">
 <meta name="keywords" content="shell">
 <meta property="og:type" content="article">
 <meta property="og:title" content="shell数组的定义">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;29&#x2F;shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89&#x2F;index.html">
 <meta property="og:site_name" content="ONE">
-<meta property="og:description" content="shell数组01. shell数组的分类 普通数组：只能以数字作为索引(也称之为下标) 关联数组：可以使用字符作为索引 02. shell数组常用定义方式定义普通数组123456789101112131415#定义普通数组1：[root@shell ~]# array=(one two three)#定义普通数组2:[root@shell ~]# array=([0]=one [1]=two [">
+<meta property="og:description" content="shell数组01. shell数组的分类 普通数组：只能以数字作为索引(也称之为下标) 关联数组：可以使用字符作为索引 02. shell数组常用定义方式定义普通数组">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-10-29T12:14:07.221Z">
 <meta name="twitter:card" content="summary">
@@ -270,7 +270,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ONE_lpc">
       <meta itemprop="description" content="人一能之,己百之;人十能之,己千之!">
-      <meta itemprop="image" content="/images/minion.png">
+      <meta itemprop="image" content="/images/angry-birds.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -364,9 +364,9 @@
         <h1 id="shell数组"><a href="#shell数组" class="headerlink" title="shell数组"></a>shell数组</h1><h3 id="01-shell数组的分类"><a href="#01-shell数组的分类" class="headerlink" title="01. shell数组的分类"></a>01. shell数组的分类</h3><ul>
 <li><strong>普通数组：只能以数字作为索引(也称之为下标)</strong></li>
 <li><strong>关联数组：可以使用字符作为索引</strong></li>
-</ul><h3 id="02-shell数组常用定义方式"><a href="#02-shell数组常用定义方式" class="headerlink" title="02. shell数组常用定义方式"></a>02. shell数组常用定义方式</h3><p>定义普通数组</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义普通数组1：</span></span><br><span class="line">[root@shell ~]# array=(one two three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组2:</span></span><br><span class="line">[root@shell ~]# array=([0]=one [1]=two [2]=three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组3:</span></span><br><span class="line">[root@shell ~]# array[0]=one</span><br><span class="line">[root@shell ~]# array[1]=two</span><br><span class="line">[root@shell ~]# array[2]=three</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">不连续的索引赋值，双引号将里面的内容当成一个元素</span></span><br><span class="line">[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)</span><br><span class="line">[root@shell ~]# echo $&#123;array_1[*]&#125;</span><br><span class="line">oldboy name linux centos shell kvm</span><br><span class="line">[root@shell ~]# echo $&#123;!array_1[*]&#125;</span><br><span class="line">0 1 5 6 10</span><br></pre></td></tr></table></figure><a id="more"></a>
+</ul><h3 id="02-shell数组常用定义方式"><a href="#02-shell数组常用定义方式" class="headerlink" title="02. shell数组常用定义方式"></a>02. shell数组常用定义方式</h3><p>定义普通数组</p><a id="more"></a>
 
-
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">定义普通数组1：</span></span><br><span class="line">[root@shell ~]# array=(one two three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组2:</span></span><br><span class="line">[root@shell ~]# array=([0]=one [1]=two [2]=three)</span><br><span class="line"><span class="meta">#</span><span class="bash">定义普通数组3:</span></span><br><span class="line">[root@shell ~]# array[0]=one</span><br><span class="line">[root@shell ~]# array[1]=two</span><br><span class="line">[root@shell ~]# array[2]=three</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">不连续的索引赋值，双引号将里面的内容当成一个元素</span></span><br><span class="line">[root@shell ~]# array_1=(oldboy name [5]=linux "centos shell" [10]=kvm)</span><br><span class="line">[root@shell ~]# echo $&#123;array_1[*]&#125;</span><br><span class="line">oldboy name linux centos shell kvm</span><br><span class="line">[root@shell ~]# echo $&#123;!array_1[*]&#125;</span><br><span class="line">0 1 5 6 10</span><br></pre></td></tr></table></figure>
 <p>定义管理数组</p>
 <blockquote>
 <p>创建关联数组前需要声明</p>
@@ -509,7 +509,7 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image"
-      src="/images/minion.png"
+      src="/images/angry-birds.png"
       alt="ONE_lpc">
   <p class="site-author-name" itemprop="name">ONE_lpc</p>
   <div class="site-description" itemprop="description">人一能之,己百之;人十能之,己千之!</div>
