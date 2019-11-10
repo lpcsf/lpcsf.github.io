@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.2">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.2">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.2" color="#222">
+  <link rel="alternate" href="/atom.xml" title="ONE" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.2">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Docker  网络一、Docker 网络模式 host 模式 容器和宿主机共享 network namespace  container 模式 容器和另外一个容器共享 Network namespace  none 模式:  该模式关闭了容器的网络功能  bridge 模式 默认模式，该模式会为每一个容器分配IP，并将容器连接到一个docker 0的虚拟网桥上">
+<meta name="keywords" content="云计算,DOCKER">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云计算之Docker 网络">
+<meta property="og:url" content="http:&#x2F;&#x2F;lpcsf.git.io&#x2F;2019&#x2F;11&#x2F;10&#x2F;%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C&#x2F;index.html">
+<meta property="og:site_name" content="ONE">
+<meta property="og:description" content="Docker  网络一、Docker 网络模式 host 模式 容器和宿主机共享 network namespace  container 模式 容器和另外一个容器共享 Network namespace  none 模式:  该模式关闭了容器的网络功能  bridge 模式 默认模式，该模式会为每一个容器分配IP，并将容器连接到一个docker 0的虚拟网桥上">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191110&#x2F;VqOPjwmm379I.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191110&#x2F;1Hf7Aecesec0.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191110&#x2F;SkMS4OStxpRT.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191110&#x2F;Xbrhp8dphW8E.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191109&#x2F;rJTXbAU6szE9.png?imageslim">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191109&#x2F;DDMr1kYV1yH2.png?imageslim">
+<meta property="og:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191109&#x2F;FXo0PQfe1GHD.png">
+<meta property="og:updated_time" content="2019-11-10T10:41:08.886Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;tu.bossx.club&#x2F;blog&#x2F;20191110&#x2F;VqOPjwmm379I.png">
+  <link rel="canonical" href="http://lpcsf.git.io/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>云计算之Docker 网络 | ONE</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ONE</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+    
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+          <i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lpcsf.git.io/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ONE_lpc">
+      <meta itemprop="description" content="人一能之,己百之;人十能之,己千之!">
+      <meta itemprop="image" content="/images/angry-birds.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            云计算之Docker 网络
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-10 15:03:53 / 修改时间：18:41:08" itemprop="dateCreated datePublished" datetime="2019-11-10T15:03:53+08:00">2019-11-10</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>8.5k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>14 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Docker-网络"><a href="#Docker-网络" class="headerlink" title="Docker  网络"></a>Docker  网络</h1><h2 id="一、Docker-网络模式"><a href="#一、Docker-网络模式" class="headerlink" title="一、Docker 网络模式"></a>一、Docker 网络模式</h2><ul>
+<li><p>host 模式</p>
+<p>容器和宿主机共享 network namespace</p>
+</li>
+<li><p>container 模式</p>
+<p>容器和另外一个容器共享 Network namespace</p>
+</li>
+<li><p>none 模式: </p>
+<p>该模式关闭了容器的网络功能</p>
+</li>
+<li><p>bridge 模式</p>
+<p>默认模式，该模式会为每一个容器分配IP，并将容器连接到一个docker 0的虚拟网桥上</p>
+</li>
+</ul><a id="more"></a>
+<h3 id="1-1-bridge-模式"><a href="#1-1-bridge-模式" class="headerlink" title="1.1 bridge 模式"></a>1.1 bridge 模式</h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>当Docker进程启动时，会在主机上创建一个名为docker0的虚拟网桥。</p>
+<p>此主机上启动<em>Docker容器会连接到这个虚拟网桥上，所以有*</em>默认地址172.17.0.0/16**的地址。</p>
+<p>从docker0子网中分配一个IP给容器使用，并设置docker0的IP地址为容器的默认网关。</p>
+<p>在主机上创建一对虚拟网卡veth pair设备，Docker将veth pair设备的一端放在新创建的容器中，并命名为eth0（</p>
+<p>另一端放在主机中，以vethxxx这样类似的名字命名，并将这个网络设备加入到docker0网桥中。可以通过brctl show命令查看。</p>
+<h4 id="bridge-示意图"><a href="#bridge-示意图" class="headerlink" title="bridge 示意图"></a>bridge 示意图</h4><p> <img src="http://tu.bossx.club/blog/20191110/VqOPjwmm379I.png" alt="mark"></p>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network=bridge busybox</span>
+/ <span class="token comment" spellcheck="true"># hostname </span>
+5b49bbaecb7e
+/ <span class="token comment" spellcheck="true"># ifconfig </span>
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02  
+          inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:7 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:586 <span class="token punctuation">(</span>586.0 B<span class="token punctuation">)</span>  TX bytes:0 <span class="token punctuation">(</span>0.0 B<span class="token punctuation">)</span>
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 <span class="token punctuation">(</span>0.0 B<span class="token punctuation">)</span>  TX bytes:0 <span class="token punctuation">(</span>0.0 B<span class="token punctuation">)</span></code></pre>
+<h3 id="1-2-host-模式"><a href="#1-2-host-模式" class="headerlink" title="1.2 host 模式"></a>1.2 host 模式</h3><h4 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h4><p>使用<code>host</code>网络模式，  容器将不会虚拟出自己的网卡，配置自己的IP等，而是<strong>使用宿主机的IP和端口</strong>。</p>
+<p><strong>容器的其他方面，如文件系统、进程列表等还是和宿主机隔离的</strong>。 </p>
+<p>host 模式不需要做网络地址转换(NAT)，并且不会为每个端口创建”userlad-proxy”，所以它的<strong>性能是最高</strong>的。</p>
+<h4 id="Host-模式示意图"><a href="#Host-模式示意图" class="headerlink" title="Host 模式示意图"></a>Host 模式示意图</h4><p><img src="http://tu.bossx.club/blog/20191110/1Hf7Aecesec0.png" alt="host"></p>
+<h4 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h4><blockquote>
+<p>公用宿主机，主机名与IP地址都与宿主机公用</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network=host busybox</span>
+/ <span class="token comment" spellcheck="true"># hostname </span>
+docker01
+/ <span class="token comment" spellcheck="true"># ifconfig eth0</span>
+eth0      Link encap:Ethernet  HWaddr 00:0C:29:3A:CC:0A  
+          inet addr:10.0.0.11  Bcast:10.0.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::20c:29ff:fe3a:cc0a/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:523747 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:147805 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:746408332 <span class="token punctuation">(</span>711.8 MiB<span class="token punctuation">)</span>  TX bytes:18872001 <span class="token punctuation">(</span>17.9 MiB<span class="token punctuation">)</span></code></pre>
+<h3 id="1-3-container-模式"><a href="#1-3-container-模式" class="headerlink" title="1.3 container 模式"></a>1.3 container 模式</h3><h4 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h4><p>这个模式指定<strong>新创建的容器和已经存在的一个容器共享一个 Network Namespace</strong>，而不是和宿主机共享。</p>
+<p><strong>新创建的容器不会创建自己的网卡，配置自己的 IP，而是和一个指定的容器共享 IP、端口范围</strong>等。</p>
+<p>同样，<strong>两个容器除了网络方面，其他的如文件系统、进程列表等还是隔离的</strong>。</p>
+<p>两个容器的进程可以通过 lo 网卡设备通信。</p>
+<h4 id="container-模式示意图"><a href="#container-模式示意图" class="headerlink" title="container 模式示意图"></a>container 模式示意图</h4><p><img src="http://tu.bossx.club/blog/20191110/SkMS4OStxpRT.png" alt="container">)) </p>
+<h4 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h4><pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network container:5b49bbaecb7e  busybox
+/ # hostname 
+5b49bbaecb7e
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02  
+          inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:656 (656.0 B)  TX bytes:0 (0.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</code></pre>
+<h3 id="1-4-node-模式"><a href="#1-4-node-模式" class="headerlink" title="1.4 node 模式"></a>1.4 node 模式</h3><h4 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h4><p> 使用none模式，Docker容器拥有自己的Network Namespace，但是，<strong>并不为Docker容器进行任何网络配置</strong>。 </p>
+<p> 也就是说，这个Docker容器没有网卡、IP、路由等信息，只有lo 网络接口。 </p>
+<h4 id="none-示意图"><a href="#none-示意图" class="headerlink" title="none 示意图"></a>none 示意图</h4><p><img src="http://tu.bossx.club/blog/20191110/Xbrhp8dphW8E.png" alt="node">) ) </p>
+<h4 id="实例-3"><a href="#实例-3" class="headerlink" title="实例"></a>实例</h4><pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network none busybox
+/ # ifconfig 
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</code></pre>
+<h3 id="1-5-Docker-网络相关命令"><a href="#1-5-Docker-网络相关命令" class="headerlink" title="1.5 Docker 网络相关命令"></a>1.5 Docker 网络相关命令</h3><table>
+<thead>
+<tr>
+<th>docker 命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker network connect</td>
+<td>将容器连接到网络</td>
+</tr>
+<tr>
+<td>docker network create</td>
+<td>创建一个网络</td>
+</tr>
+<tr>
+<td>docker network disconnect</td>
+<td>将容器从网络断开</td>
+</tr>
+<tr>
+<td>docker network inspect</td>
+<td>查看网络的详细信息</td>
+</tr>
+<tr>
+<td>docker network ls</td>
+<td>查看网络列表</td>
+</tr>
+<tr>
+<td>docker network prune</td>
+<td>删除所有未使用的网络</td>
+</tr>
+<tr>
+<td>docker network rm</td>
+<td>删除网络</td>
+</tr>
+</tbody></table>
+<h2 id="二、Docker-跨主机容器之间的通讯macvlan"><a href="#二、Docker-跨主机容器之间的通讯macvlan" class="headerlink" title="二、Docker 跨主机容器之间的通讯macvlan"></a>二、Docker 跨主机容器之间的通讯macvlan</h2><h3 id="2-1-macvlan-介绍"><a href="#2-1-macvlan-介绍" class="headerlink" title="2.1 macvlan 介绍"></a>2.1 macvlan 介绍</h3><p>macvlan 本身是 linux kernel 模块，其功能是允许在同一个物理网卡上配置多个 MAC 地址，</p>
+<p>即多个 interface，每个 interface 可以配置自己的 IP。</p>
+<p>macvlan 本质上是一种网卡虚拟化技术</p>
+<h3 id="2-2-macvlan网络-创建"><a href="#2-2-macvlan网络-创建" class="headerlink" title="2.2 macvlan网络 创建"></a>2.2 macvlan网络 创建</h3><pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker network create --driver macvlan --subnet 10.0.0.0/24 --gateway 10.0.0.254 -o parent=eth0 macvlan_1
+
+参数说明
+--driver          使用的网络类型
+--subnet          使用的网段/子网范围
+--gateway         网段地址
+-o parent=eth0  基于eth0进行的桥接/流量将在docker主机上的实际通过的接口
+macvlan_1        创建网络的名称    </code></pre>
+<p>查看创建网络</p>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+b8aa27b430c9        bridge              bridge              local
+418c982a7562        host                host                local
+b1627a2e64ff        macvlan_1           macvlan             local   ##创建的macvlan网络
+7adeb86e280f        none                null                local</code></pre>
+<h3 id="2-3-macvlan网络-测试"><a href="#2-3-macvlan网络-测试" class="headerlink" title="2.3 macvlan网络 测试"></a>2.3 macvlan网络 测试</h3><p><strong>环境说明</strong></p>
+<p>​    使用镜像 centos:6.9    </p>
+<p>​    docker01 主机：10.0.0.11    </p>
+<p>​    docker02 主机：10.0.0.12</p>
+<p><strong>1) 开启网卡的混杂模式</strong></p>
+<pre class=" language-shell"><code class="language-shell">ip link set eth0 promisc on</code></pre>
+<p><strong>2) 创建网络</strong> </p>
+<p> docker01 与docker02 同时操作</p>
+<pre class=" language-shell"><code class="language-shell">docker network create --driver macvlan --subnet 10.0.0.0/24 --gateway 10.0.0.254 -o parent=eth0 macvlan_1</code></pre>
+<p><strong>3) 创建容器</strong></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network macvlan_1  --ip=10.0.0.100 busybox</span>
+<span class="token punctuation">[</span>root@docker02 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network macvlan_1  --ip=10.0.0.200 busybox</span></code></pre>
+<p><strong>4) 访问测试</strong></p>
+<p>#docker01 主机</p>
+<pre class=" language-shell"><code class="language-shell">-- 连接docker02 主机上的容器
+/ # ping 10.0.0.200
+PING 10.0.0.200 (10.0.0.200): 56 data bytes
+64 bytes from 10.0.0.200: seq=0 ttl=64 time=0.324 ms
+64 bytes from 10.0.0.200: seq=1 ttl=64 time=0.437 ms
+
+-- 连接 docker02 主机
+/ # ping -w 3 10.0.0.11
+PING 10.0.0.11 (10.0.0.11): 56 data bytes
+
+--- 10.0.0.11 ping statistics ---
+4 packets transmitted, 0 packets received, 100% packet loss
+
+-- 连接docker01 主机
+/ # ping  10.0.0.12
+PING 10.0.0.12 (10.0.0.12): 56 data bytes
+64 bytes from 10.0.0.12: seq=1 ttl=64 time=0.662 ms</code></pre>
+<p><strong>5) DHCP 模式</strong></p>
+<blockquote>
+<p>问题：每个容器都会从<code>1</code>开始分配</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network macvlan_1 centos:6.9
+[root@b0031b3570ba /]# ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:0A:00:00:01  
+          inet addr:10.0.0.1  Bcast:10.0.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+[root@docker02 ~]# docker run -it --network macvlan_1 centos:6.9 
+[root@648805d9dea4 /]# ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:0A:00:00:01  
+          inet addr:10.0.0.1  Bcast:10.0.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)</code></pre>
+<h3 id="2-4-macvlan-网络的缺点"><a href="#2-4-macvlan-网络的缺点" class="headerlink" title="2.4 macvlan 网络的缺点"></a>2.4 macvlan 网络的缺点</h3><ul>
+<li>需要手动指令IP地址，容易出现IP地址冲突问题</li>
+<li>使用macvlan网络的容器无法连接宿主机</li>
+</ul>
+<h2 id="三、Dcoker跨主机容器通信之overlay"><a href="#三、Dcoker跨主机容器通信之overlay" class="headerlink" title="三、Dcoker跨主机容器通信之overlay"></a>三、Dcoker跨主机容器通信之overlay</h2><h3 id="3-1-overlay-介绍"><a href="#3-1-overlay-介绍" class="headerlink" title="3.1 overlay 介绍"></a>3.1 overlay 介绍</h3><p> overlay模式是多个Docker主机之间的分布式网络解决方案。</p>
+<p>该网络位于特定于主机的网络之上，允许连接到它的容器（包括群集服务容器）安全地进行通信。</p>
+<p>Docker透明地处理每个数据包与Docker守护程序主机和正确的目标容器之间正确的的路由。 </p>
+<p><img src="http://tu.bossx.club/blog/20191109/rJTXbAU6szE9.png?imageslim" alt="overlay"></p>
+<h3 id="3-2-overlay-网络使用条件"><a href="#3-2-overlay-网络使用条件" class="headerlink" title="3.2 overlay 网络使用条件"></a>3.2 overlay 网络使用条件</h3><ul>
+<li>正常工作的key-value 存储服务，比如 consul、etcd、zookeeper 等</li>
+<li>可以访问到 key-value 服务的主机集群</li>
+<li>集群中的每台机器的hostname都是唯一的</li>
+</ul>
+<h3 id="3-3-overlay-网络模拟"><a href="#3-3-overlay-网络模拟" class="headerlink" title="3.3 overlay 网络模拟"></a>3.3 overlay 网络模拟</h3><h4 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h4><p><strong>主机</strong></p>
+<p>docker-network 10.0.0.10</p>
+<p>docker01 10.0.0.11</p>
+<p>docker02 10.0.0.12</p>
+<p><strong>docker 版本</strong>： Docker version 19.03.4</p>
+<h4 id="启动consul"><a href="#启动consul" class="headerlink" title="启动consul"></a>启动consul</h4><blockquote>
+<p>这里直接使用最简单的<code>docker</code>方式启动</p>
+</blockquote>
+<p>创建一个consul 容器</p>
+<pre class=" language-shell"><code class="language-shell">[root@consul ~]# docker run -d -p 8500:8500 -h consul --name consul progrium/consul -server -bootstrap
+[root@consul ~]# netstat -lntup|grep 8500
+tcp6       0      0 :::8500                 :::*                    LISTEN      9628/docker-proxy  </code></pre>
+<p>容器创建成功后，会启动一个8500端口</p>
+<p>我们通过此端口可以访问consul的web管理界面</p>
+<p><img src="http://tu.bossx.club/blog/20191109/DDMr1kYV1yH2.png?imageslim" alt="consul"></p>
+<h4 id="修改docker-配置文件"><a href="#修改docker-配置文件" class="headerlink" title="修改docker 配置文件"></a>修改docker 配置文件</h4><blockquote>
+<p>–cluster-store 指定 consul 的地址。<br>–cluster-advertise 告知 consul 自己的连接地址。 </p>
+</blockquote>
+<p>docker01 </p>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# vim /etc/docker/daemon.json
+{
+  "hosts":["tcp://0.0.0.0:2376","unix:///var/run/docker.sock"],
+  "cluster-store": "consul://10.0.0.10:8500",
+  "cluster-advertise": "10.0.0.11:2376"
+}
+
+[root@docker01 ~]#  vim /usr/lib/systemd/system/docker.service
+ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock   
+[root@docker01 ~]# systemctl daemon-reload 
+[root@docker01 ~]# systemctl restart docker</code></pre>
+<p>docker02 </p>
+<pre class=" language-shell"><code class="language-shell">[root@docker02 ~]# vim /etc/docker/daemon.json
+{
+  "hosts":["tcp://0.0.0.0:2376","unix:///var/run/docker.sock"],
+  "cluster-store": "consul://10.0.0.10:8500",
+  "cluster-advertise": "10.0.0.12:2376"
+}
+[root@docker02 ~]#  vim /usr/lib/systemd/system/docker.service
+ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock   
+[root@docker02 ~]# systemctl daemon-reload 
+[root@docker02 ~]# systemctl restart docker</code></pre>
+<p>此时 docker01 与docker02 将自动注册到consul 数据库中</p>
+<p><img src="http://tu.bossx.club/blog/20191109/FXo0PQfe1GHD.png" alt></p>
+<h4 id="创建-overlay-网络"><a href="#创建-overlay-网络" class="headerlink" title="创建 overlay 网络"></a>创建 overlay 网络</h4><p>docker01 </p>
+<pre class=" language-shell"><code class="language-shell"> [root@docker01 ~]# docker network create -d overlay --subnet 172.16.2.0/24 --gateway 172.16.2.254  ol1
+ [root@docker01 ~]# docker network ls 
+NETWORK ID          NAME                DRIVER              SCOPE
+7cf8a5332f43        ol1                 overlay             global</code></pre>
+<h4 id="测试网络"><a href="#测试网络" class="headerlink" title="测试网络"></a>测试网络</h4><p>创建容器查看网络</p>
+<blockquote>
+<p>这里需要注意，在overlay网络中，集群中的容器名称必须唯一</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network ol1 --name test01  busybox:latest
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:10:02:01  
+          inet addr:172.16.2.1  Bcast:172.16.2.255  Mask:255.255.255.0
+eth1      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02  
+          inet addr:172.18.0.2  Bcast:172.18.255.255  Mask:255.255.0.0
+
+[root@docker02 ~]# docker run -it --network ol1 --name test02  busybox:latest
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:10:02:02  
+          inet addr:172.16.2.2  Bcast:172.16.2.255  Mask:255.255.255.0
+eth1      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02  
+          inet addr:172.18.0.2  Bcast:172.18.255.255  Mask:255.255.0.0</code></pre>
+<p>连接测试</p>
+<pre class=" language-shell"><code class="language-shell">[root@docker02 ~]# docker run -it --network ol1 --name test02  busybox:latest
+/ # ping 172.16.2.1
+PING 172.16.2.1 (172.16.2.1): 56 data bytes
+64 bytes from 172.16.2.1: seq=0 ttl=64 time=0.399 ms
+64 bytes from 172.16.2.1: seq=1 ttl=64 time=0.373 ms
+/ # ping test01
+PING test01 (172.16.2.1): 56 data bytes
+64 bytes from 172.16.2.1: seq=0 ttl=64 time=0.317 ms
+64 bytes from 172.16.2.1: seq=1 ttl=64 time=0.478 ms
+/ # ping 223.5.5.5
+PING 223.5.5.5 (223.5.5.5): 56 data bytes
+64 bytes from 223.5.5.5: seq=0 ttl=127 time=6.389 ms
+64 bytes from 223.5.5.5: seq=1 ttl=127 time=11.280 ms
+/ # ping 10.0.0.11
+PING 10.0.0.11 (10.0.0.11): 56 data bytes
+64 bytes from 10.0.0.11: seq=0 ttl=63 time=0.455 ms
+/ # ping 10.0.0.10
+PING 10.0.0.10 (10.0.0.10): 56 data bytes
+64 bytes from 10.0.0.10: seq=0 ttl=63 time=0.342 ms</code></pre>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ONE_lpc
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lpcsf.git.io/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/" title="云计算之Docker 网络">http://lpcsf.git.io/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/" rel="tag"># 云计算</a>
+            
+              <a href="/tags/DOCKER/" rel="tag"># DOCKER</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/03/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E5%9F%BA%E7%A1%80/" rel="next" title="云计算之Docker 基础">
+                  <i class="fa fa-chevron-left"></i> 云计算之Docker 基础
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E4%BB%93%E5%BA%93%20/" rel="prev" title="云计算之Docker 仓库 ">
+                  云计算之Docker 仓库  <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker-网络"><span class="nav-number">1.</span> <span class="nav-text">Docker  网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Docker-网络模式"><span class="nav-number">1.1.</span> <span class="nav-text">一、Docker 网络模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-bridge-模式"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 bridge 模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bridge-示意图"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">bridge 示意图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-host-模式"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 host 模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-1"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Host-模式示意图"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">Host 模式示意图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例-1"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-container-模式"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 container 模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-2"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#container-模式示意图"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">container 模式示意图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例-2"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-node-模式"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 node 模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-3"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#none-示意图"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">none 示意图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例-3"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Docker-网络相关命令"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 Docker 网络相关命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Docker-跨主机容器之间的通讯macvlan"><span class="nav-number">1.2.</span> <span class="nav-text">二、Docker 跨主机容器之间的通讯macvlan</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-macvlan-介绍"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 macvlan 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-macvlan网络-创建"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 macvlan网络 创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-macvlan网络-测试"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 macvlan网络 测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-macvlan-网络的缺点"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 macvlan 网络的缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、Dcoker跨主机容器通信之overlay"><span class="nav-number">1.3.</span> <span class="nav-text">三、Dcoker跨主机容器通信之overlay</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-overlay-介绍"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 overlay 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-overlay-网络使用条件"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 overlay 网络使用条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-overlay-网络模拟"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 overlay 网络模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境说明"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">环境说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启动consul"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">启动consul</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改docker-配置文件"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">修改docker 配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建-overlay-网络"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">创建 overlay 网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试网络"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">测试网络</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/angry-birds.png"
+      alt="ONE_lpc">
+  <p class="site-author-name" itemprop="name">ONE_lpc</p>
+  <div class="site-description" itemprop="description">人一能之,己百之;人十能之,己千之!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ONE</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">29k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">48 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.2"></script><script src="/js/motion.js?v=7.4.2"></script>
+<script src="/js/schemes/pisces.js?v=7.4.2"></script>
+
+<script src="/js/next-boot.js?v=7.4.2"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.4.2"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

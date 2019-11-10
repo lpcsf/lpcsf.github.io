@@ -1,6 +1,793 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>云计算之Docker 仓库 </title>
+    <url>/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E4%BB%93%E5%BA%93%20/</url>
+    <content><![CDATA[<h1 id="Docker-私有仓库"><a href="#Docker-私有仓库" class="headerlink" title="Docker  私有仓库"></a>Docker  私有仓库</h1><blockquote>
+<p>搭建私有仓库，能使内网的主机加快访问速度，对CI,CD的效率有很大提升。 能有效保护内部代码，防止放到公网泄漏出去。 </p>
+</blockquote><h2 id="一、Docker-registry"><a href="#一、Docker-registry" class="headerlink" title="一、Docker registry"></a>一、Docker registry</h2><a id="more"></a>
+<p> <code>docker-registry</code>是官方提供的工具，可以用于构建私有的镜像仓库。 </p>
+<h3 id="1-1-安装运行-Docker-registry"><a href="#1-1-安装运行-Docker-registry" class="headerlink" title="1.1 安装运行 Docker-registry"></a>1.1 安装运行 Docker-registry</h3><p><strong>docker01上创建私有仓库</strong></p>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -d -p 5000:5000 --restart=always --name registry -v /opt/myregistry:/var/lib/registry  registry</code></pre>
+<p><strong>docker02 上传到私有仓库</strong></p>
+<pre class=" language-shell"><code class="language-shell"># 查看镜像
+[root@docker02 ~]# docker images 
+REPOSITORY          TAG            IMAGE ID                CREATED                 SIZE
+busybox             latest         d8233ab899d4            8 months ago            1.2MB
+
+# 给镜像打标签
+需要传到我们的私有仓库，可以用IP或域名
+[root@docker02 ~]# docker tag busybox:latest 10.0.0.10:5000/busybox:latest
+
+# 上次镜像
+[root@docker02 ~]# docker pull 10.0.0.10:5000/busybox:latest 
+
+# 第一次会遇到报错
+# 因为 Docker 默认不允许非 HTTPS 方式推送镜像。我们可以通过 Docker 的配置选项来取消这个限制
+The push refers to repository [10.0.0.10:5000/busybox:latest]
+Get https://10.0.0.10:5000/v2/: http: server gave HTTP response to HTTPS client
+
+# 解决方法/添加信任私有仓库
+[root@docker02 ~]# vim  /etc/docker/daemon.json
+{
+  "insecure-registries": ["10.0.0.10:5000"]
+}
+[root@docker02 ~]# systemctl restart docker
+
+# 再次上传
+[root@docker02 ~]# docker push 10.0.0.10:5000/busybox   
+The push refers to repository [10.0.0.10:5000/busybox]
+78cd8c87ab42: Pushed 
+60ab55d3379d: Pushed 
+latest: digest: sha256:4415a904b1aca178c2450fd54928ab362825e863c0ad5452fd020e92f7a6a47e size: 527</code></pre>
+<p><strong>查看镜像仓库镜像</strong> </p>
+<p>使用浏览器访问： <a href="http://10.0.0.10:5000/v2/_catalog" target="_blank" rel="noopener">http://10.0.0.10:5000/v2/_catalog</a></p>
+<p>由于我们将私有仓库做了持久化，所以可以在docker01 上找到上传的镜像</p>
+<p><img src="http://tu.bossx.club/blog/20191110/Gr2daQaOoTwE.png" alt="mark"></p>
+<h3 id="1-2-带basic认证的registry"><a href="#1-2-带basic认证的registry" class="headerlink" title="1.2 带basic认证的registry"></a>1.2 带basic认证的registry</h3><p><strong>docker01</strong> </p>
+<pre class=" language-shell"><code class="language-shell"># 删除之前的私有仓库
+docker rm -f registry
+# 
+yum install httpd-tools -y
+# 创建目录
+mkdir /opt/registry-var/auth/ -p
+# 生成密码文件
+htpasswd  -Bbn onelpc 123456  >> /opt/registry-var/auth/htpasswd
+
+#启动容器 
+docker run -d -p 5000:5000 --restart=always -v /opt/registry-var/auth/:/auth/ -v /opt/myregistry:/var/lib/registry -e "REGISTRY_AUTH=htpasswd" -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e  "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" registry </code></pre>
+<p><strong>docker 02</strong> </p>
+<pre class=" language-shell"><code class="language-shell"># 再次从私有仓库下载镜像
+[root@docker02 ~]# docker pull 10.0.0.11:5000/busybox
+Using default tag: latest
+Error response from daemon: Get http://10.0.0.11:5000/v2/busybox/manifests/latest: no basic auth credentials
+-- 此时报错是没有登录
+# 登录私有仓库
+[root@docker02 ~]# docker login 10.0.0.11:5000
+Username: oldboy
+Password: 
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+
+# 再次下载镜像
+[root@docker01 ~]# docker pull 10.0.0.11:5000/busybox
+Using default tag: latest
+latest: Pulling from busybox
+Digest: sha256:4415a904b1aca178c2450fd54928ab362825e863c0ad5452fd020e92f7a6a47e
+Status: Image is up to date for 10.0.0.11:5000/busybox:latest
+10.0.0.11:5000/busybox:latest
+</code></pre>
+<h2 id="二、docker-企业级私有仓库-Harbor"><a href="#二、docker-企业级私有仓库-Harbor" class="headerlink" title="二、docker 企业级私有仓库 Harbor"></a>二、docker 企业级私有仓库 Harbor</h2><h3 id="2-1-Harbor-概述"><a href="#2-1-Harbor-概述" class="headerlink" title="2.1 Harbor 概述"></a>2.1 Harbor 概述</h3><p>Habor是由VMWare公司开源的容器镜像仓库。事实上，Habor是在Docker Registry上进行了相应的<br>企业级扩展，从而获得了更加广泛的应用，这些新的企业级特性包括：管理用户界面，基于角色的访<br>问控制 ，AD/LDAP集成以及审计日志等，足以满足基本企业需求。<br>官方地址：<a href="https://vmware.github.io/harbor/cn/" target="_blank" rel="noopener">https://vmware.github.io/harbor/cn/</a></p>
+<p> <img src="https://s1.51cto.com/images/blog/201811/27/7aed213fd4a040a229cb7fd0ef404bee.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="img"> </p>
+<h3 id="2-2-Harbor-优势"><a href="#2-2-Harbor-优势" class="headerlink" title="2.2 Harbor 优势"></a>2.2 Harbor 优势</h3><ul>
+<li><p><strong>友好的web界面</strong></p>
+</li>
+<li><p><strong>基于角色访问控制（RBAC）</strong></p>
+<p>在企业中，通常有不同的开发团队负责不同的项目，镜像像代码一样，每个人角色不同需求也不同，因此就需要访问权限控制，根据角色分配相应的权限。 </p>
+</li>
+<li><p><strong>镜像复制</strong></p>
+<p>可以将仓库中的镜像同步到远程的Harbor，类似于MySQL主从同步功能。</p>
+</li>
+<li><p><strong>LDAP</strong></p>
+<p>Harbor支持LDAP认证，可以很轻易接入已有的LDAP。</p>
+</li>
+<li><p><strong>镜像删除和空间回收</strong></p>
+<p>Harbor支持在Web删除镜像，回收无用的镜像，释放磁盘空间。</p>
+</li>
+<li><p><strong>图形页面管理</strong></p>
+<p>用户很方面搜索镜像及项目管理。</p>
+</li>
+<li><p><strong>审计</strong></p>
+<p>对仓库的所有操作都有记录。</p>
+</li>
+<li><p><strong>REST API</strong></p>
+<p>完整的API，方便与外部集成。</p>
+</li>
+</ul>
+<h3 id="2-3-搭建harbor-仓库"><a href="#2-3-搭建harbor-仓库" class="headerlink" title="2.3 搭建harbor 仓库"></a>2.3 搭建harbor 仓库</h3><blockquote>
+<p>Harbor离线安装包下载地址：<a href="https://github.com/goharbor/harbor" target="_blank" rel="noopener">https://github.com/goharbor/harbor</a> </p>
+</blockquote>
+<pre class=" language-shell、"><code class="language-shell、"># 下载 docker-compose (需要epel源)
+yum install docker-compose 
+
+# 下载harbor-offline
+# 上传到/opt，并且解压
+tar xf harbor-offline-installer-v1.9.2.tgz
+cd harbor
+# 修改harbor.cfg配置文件
+hostname= 10.0.0.12               # 仓库IP地址
+harbor_admin_password=123456    # 默认登录密码
+# 执行install.sh
+./install.sh </code></pre>
+<p>一下提示说明安装完成</p>
+<p><img src="http://tu.bossx.club/blog/20191110/dtmOq5S8Oacb.png" alt="安装完成"></p>
+<p>访问 10.0.0.12</p>
+<p><img src="http://tu.bossx.club/blog/20191110/5NbIxHX9KVPD.png" alt="mark"></p>
+<p>由于没有配置HTTPS ，其他主机需要配置htpp镜像仓库可信任，才可以进行推送与拉取镜像</p>
+<h3 id="2-4-harbor配置https"><a href="#2-4-harbor配置https" class="headerlink" title="2.4 harbor配置https"></a>2.4 harbor配置https</h3><blockquote>
+<p>会将之前的harbor仓库删除，重新生成</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell"># 上传https证书
+
+# 修改配置文件harbor.cfg
+hostname = onelpc.com         # 域名
+ui_url_protocol = https        # 使用的协议
+ssl_cert = /opt/certs/Nginx/1_blog.qstack.com.cn_bundle.crt    #https证书路径
+ssl_cert_key = /opt/certs/Nginx/2_blog.qstack.com.cn.key    #https证书路径
+
+#修改脚本文件注释这一行加快执行速度(由于之前到过镜像)
+[root@docker02 harbor]# vim install.sh 
+#       docker load -i ./harbor*.tar.gz
+
+#执行脚本安装harbor
+[root@docker02 harbor]# ./install.sh</code></pre>
+<h3 id="2-5-批量导入镜像脚本"><a href="#2-5-批量导入镜像脚本" class="headerlink" title="2.5 批量导入镜像脚本"></a>2.5 批量导入镜像脚本</h3><blockquote>
+<p>之前在docker01 主机上搭建的<code>docker-registry</code>仓库，将原仓库中的镜像导入到harbor仓库中</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell">#docker01上登录
+[root@docker01 ~]# docker login blog.qstack.com.cn
+Username: admin
+Password: 123456
+#执行脚本
+[root@docker01 ~]# sh daoru.sh
+# 脚本内容如下
+[root@docker01 ~]# cat /server/scripts/daoru.sh 
+#!/bin/bash
+
+for i in `ls /opt/myregistry/docker/registry/v2/repositories/`
+do
+   image=$i
+   echo 镜像名称:$image
+   for v in `ls /opt/myregistry/docker/registry/v2/repositories/nginx/_manifests/tags/`
+   do
+      docker pull 10.0.0.12:5000/$image:$v
+      docker tag  10.0.0.12:5000/$image:$v blog.qstack.com.cn/library/$image:$v
+      docker push blog.qstack.com.cn/library/$image:$v
+   done
+echo "-------------------------------------"
+done</code></pre>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>云计算</tag>
+        <tag>DOCKER</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>云计算之Docker 网络</title>
+    <url>/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<h1 id="Docker-网络"><a href="#Docker-网络" class="headerlink" title="Docker  网络"></a>Docker  网络</h1><h2 id="一、Docker-网络模式"><a href="#一、Docker-网络模式" class="headerlink" title="一、Docker 网络模式"></a>一、Docker 网络模式</h2><ul>
+<li><p>host 模式</p>
+<p>容器和宿主机共享 network namespace</p>
+</li>
+<li><p>container 模式</p>
+<p>容器和另外一个容器共享 Network namespace</p>
+</li>
+<li><p>none 模式: </p>
+<p>该模式关闭了容器的网络功能</p>
+</li>
+<li><p>bridge 模式</p>
+<p>默认模式，该模式会为每一个容器分配IP，并将容器连接到一个docker 0的虚拟网桥上</p>
+</li>
+</ul><a id="more"></a>
+<h3 id="1-1-bridge-模式"><a href="#1-1-bridge-模式" class="headerlink" title="1.1 bridge 模式"></a>1.1 bridge 模式</h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>当Docker进程启动时，会在主机上创建一个名为docker0的虚拟网桥。</p>
+<p>此主机上启动<em>Docker容器会连接到这个虚拟网桥上，所以有*</em>默认地址172.17.0.0/16**的地址。</p>
+<p>从docker0子网中分配一个IP给容器使用，并设置docker0的IP地址为容器的默认网关。</p>
+<p>在主机上创建一对虚拟网卡veth pair设备，Docker将veth pair设备的一端放在新创建的容器中，并命名为eth0（</p>
+<p>另一端放在主机中，以vethxxx这样类似的名字命名，并将这个网络设备加入到docker0网桥中。可以通过brctl show命令查看。</p>
+<h4 id="bridge-示意图"><a href="#bridge-示意图" class="headerlink" title="bridge 示意图"></a>bridge 示意图</h4><p> <img src="http://tu.bossx.club/blog/20191110/VqOPjwmm379I.png" alt="mark"></p>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network=bridge busybox</span>
+/ <span class="token comment" spellcheck="true"># hostname </span>
+5b49bbaecb7e
+/ <span class="token comment" spellcheck="true"># ifconfig </span>
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02  
+          inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:7 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:586 <span class="token punctuation">(</span>586.0 B<span class="token punctuation">)</span>  TX bytes:0 <span class="token punctuation">(</span>0.0 B<span class="token punctuation">)</span>
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 <span class="token punctuation">(</span>0.0 B<span class="token punctuation">)</span>  TX bytes:0 <span class="token punctuation">(</span>0.0 B<span class="token punctuation">)</span></code></pre>
+<h3 id="1-2-host-模式"><a href="#1-2-host-模式" class="headerlink" title="1.2 host 模式"></a>1.2 host 模式</h3><h4 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h4><p>使用<code>host</code>网络模式，  容器将不会虚拟出自己的网卡，配置自己的IP等，而是<strong>使用宿主机的IP和端口</strong>。</p>
+<p><strong>容器的其他方面，如文件系统、进程列表等还是和宿主机隔离的</strong>。 </p>
+<p>host 模式不需要做网络地址转换(NAT)，并且不会为每个端口创建”userlad-proxy”，所以它的<strong>性能是最高</strong>的。</p>
+<h4 id="Host-模式示意图"><a href="#Host-模式示意图" class="headerlink" title="Host 模式示意图"></a>Host 模式示意图</h4><p><img src="http://tu.bossx.club/blog/20191110/1Hf7Aecesec0.png" alt="host"></p>
+<h4 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h4><blockquote>
+<p>公用宿主机，主机名与IP地址都与宿主机公用</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network=host busybox</span>
+/ <span class="token comment" spellcheck="true"># hostname </span>
+docker01
+/ <span class="token comment" spellcheck="true"># ifconfig eth0</span>
+eth0      Link encap:Ethernet  HWaddr 00:0C:29:3A:CC:0A  
+          inet addr:10.0.0.11  Bcast:10.0.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::20c:29ff:fe3a:cc0a/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:523747 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:147805 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:746408332 <span class="token punctuation">(</span>711.8 MiB<span class="token punctuation">)</span>  TX bytes:18872001 <span class="token punctuation">(</span>17.9 MiB<span class="token punctuation">)</span></code></pre>
+<h3 id="1-3-container-模式"><a href="#1-3-container-模式" class="headerlink" title="1.3 container 模式"></a>1.3 container 模式</h3><h4 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h4><p>这个模式指定<strong>新创建的容器和已经存在的一个容器共享一个 Network Namespace</strong>，而不是和宿主机共享。</p>
+<p><strong>新创建的容器不会创建自己的网卡，配置自己的 IP，而是和一个指定的容器共享 IP、端口范围</strong>等。</p>
+<p>同样，<strong>两个容器除了网络方面，其他的如文件系统、进程列表等还是隔离的</strong>。</p>
+<p>两个容器的进程可以通过 lo 网卡设备通信。</p>
+<h4 id="container-模式示意图"><a href="#container-模式示意图" class="headerlink" title="container 模式示意图"></a>container 模式示意图</h4><p><img src="http://tu.bossx.club/blog/20191110/SkMS4OStxpRT.png" alt="container">)) </p>
+<h4 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h4><pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network container:5b49bbaecb7e  busybox
+/ # hostname 
+5b49bbaecb7e
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02  
+          inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:656 (656.0 B)  TX bytes:0 (0.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</code></pre>
+<h3 id="1-4-node-模式"><a href="#1-4-node-模式" class="headerlink" title="1.4 node 模式"></a>1.4 node 模式</h3><h4 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h4><p> 使用none模式，Docker容器拥有自己的Network Namespace，但是，<strong>并不为Docker容器进行任何网络配置</strong>。 </p>
+<p> 也就是说，这个Docker容器没有网卡、IP、路由等信息，只有lo 网络接口。 </p>
+<h4 id="none-示意图"><a href="#none-示意图" class="headerlink" title="none 示意图"></a>none 示意图</h4><p><img src="http://tu.bossx.club/blog/20191110/Xbrhp8dphW8E.png" alt="node">) ) </p>
+<h4 id="实例-3"><a href="#实例-3" class="headerlink" title="实例"></a>实例</h4><pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network none busybox
+/ # ifconfig 
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)</code></pre>
+<h3 id="1-5-Docker-网络相关命令"><a href="#1-5-Docker-网络相关命令" class="headerlink" title="1.5 Docker 网络相关命令"></a>1.5 Docker 网络相关命令</h3><table>
+<thead>
+<tr>
+<th>docker 命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker network connect</td>
+<td>将容器连接到网络</td>
+</tr>
+<tr>
+<td>docker network create</td>
+<td>创建一个网络</td>
+</tr>
+<tr>
+<td>docker network disconnect</td>
+<td>将容器从网络断开</td>
+</tr>
+<tr>
+<td>docker network inspect</td>
+<td>查看网络的详细信息</td>
+</tr>
+<tr>
+<td>docker network ls</td>
+<td>查看网络列表</td>
+</tr>
+<tr>
+<td>docker network prune</td>
+<td>删除所有未使用的网络</td>
+</tr>
+<tr>
+<td>docker network rm</td>
+<td>删除网络</td>
+</tr>
+</tbody></table>
+<h2 id="二、Docker-跨主机容器之间的通讯macvlan"><a href="#二、Docker-跨主机容器之间的通讯macvlan" class="headerlink" title="二、Docker 跨主机容器之间的通讯macvlan"></a>二、Docker 跨主机容器之间的通讯macvlan</h2><h3 id="2-1-macvlan-介绍"><a href="#2-1-macvlan-介绍" class="headerlink" title="2.1 macvlan 介绍"></a>2.1 macvlan 介绍</h3><p>macvlan 本身是 linux kernel 模块，其功能是允许在同一个物理网卡上配置多个 MAC 地址，</p>
+<p>即多个 interface，每个 interface 可以配置自己的 IP。</p>
+<p>macvlan 本质上是一种网卡虚拟化技术</p>
+<h3 id="2-2-macvlan网络-创建"><a href="#2-2-macvlan网络-创建" class="headerlink" title="2.2 macvlan网络 创建"></a>2.2 macvlan网络 创建</h3><pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker network create --driver macvlan --subnet 10.0.0.0/24 --gateway 10.0.0.254 -o parent=eth0 macvlan_1
+
+参数说明
+--driver          使用的网络类型
+--subnet          使用的网段/子网范围
+--gateway         网段地址
+-o parent=eth0  基于eth0进行的桥接/流量将在docker主机上的实际通过的接口
+macvlan_1        创建网络的名称    </code></pre>
+<p>查看创建网络</p>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+b8aa27b430c9        bridge              bridge              local
+418c982a7562        host                host                local
+b1627a2e64ff        macvlan_1           macvlan             local   ##创建的macvlan网络
+7adeb86e280f        none                null                local</code></pre>
+<h3 id="2-3-macvlan网络-测试"><a href="#2-3-macvlan网络-测试" class="headerlink" title="2.3 macvlan网络 测试"></a>2.3 macvlan网络 测试</h3><p><strong>环境说明</strong></p>
+<p>​    使用镜像 centos:6.9    </p>
+<p>​    docker01 主机：10.0.0.11    </p>
+<p>​    docker02 主机：10.0.0.12</p>
+<p><strong>1) 开启网卡的混杂模式</strong></p>
+<pre class=" language-shell"><code class="language-shell">ip link set eth0 promisc on</code></pre>
+<p><strong>2) 创建网络</strong> </p>
+<p> docker01 与docker02 同时操作</p>
+<pre class=" language-shell"><code class="language-shell">docker network create --driver macvlan --subnet 10.0.0.0/24 --gateway 10.0.0.254 -o parent=eth0 macvlan_1</code></pre>
+<p><strong>3) 创建容器</strong></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network macvlan_1  --ip=10.0.0.100 busybox</span>
+<span class="token punctuation">[</span>root@docker02 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -it --network macvlan_1  --ip=10.0.0.200 busybox</span></code></pre>
+<p><strong>4) 访问测试</strong></p>
+<p>#docker01 主机</p>
+<pre class=" language-shell"><code class="language-shell">-- 连接docker02 主机上的容器
+/ # ping 10.0.0.200
+PING 10.0.0.200 (10.0.0.200): 56 data bytes
+64 bytes from 10.0.0.200: seq=0 ttl=64 time=0.324 ms
+64 bytes from 10.0.0.200: seq=1 ttl=64 time=0.437 ms
+
+-- 连接 docker02 主机
+/ # ping -w 3 10.0.0.11
+PING 10.0.0.11 (10.0.0.11): 56 data bytes
+
+--- 10.0.0.11 ping statistics ---
+4 packets transmitted, 0 packets received, 100% packet loss
+
+-- 连接docker01 主机
+/ # ping  10.0.0.12
+PING 10.0.0.12 (10.0.0.12): 56 data bytes
+64 bytes from 10.0.0.12: seq=1 ttl=64 time=0.662 ms</code></pre>
+<p><strong>5) DHCP 模式</strong></p>
+<blockquote>
+<p>问题：每个容器都会从<code>1</code>开始分配</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network macvlan_1 centos:6.9
+[root@b0031b3570ba /]# ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:0A:00:00:01  
+          inet addr:10.0.0.1  Bcast:10.0.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+[root@docker02 ~]# docker run -it --network macvlan_1 centos:6.9 
+[root@648805d9dea4 /]# ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:0A:00:00:01  
+          inet addr:10.0.0.1  Bcast:10.0.0.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)</code></pre>
+<h3 id="2-4-macvlan-网络的缺点"><a href="#2-4-macvlan-网络的缺点" class="headerlink" title="2.4 macvlan 网络的缺点"></a>2.4 macvlan 网络的缺点</h3><ul>
+<li>需要手动指令IP地址，容易出现IP地址冲突问题</li>
+<li>使用macvlan网络的容器无法连接宿主机</li>
+</ul>
+<h2 id="三、Dcoker跨主机容器通信之overlay"><a href="#三、Dcoker跨主机容器通信之overlay" class="headerlink" title="三、Dcoker跨主机容器通信之overlay"></a>三、Dcoker跨主机容器通信之overlay</h2><h3 id="3-1-overlay-介绍"><a href="#3-1-overlay-介绍" class="headerlink" title="3.1 overlay 介绍"></a>3.1 overlay 介绍</h3><p> overlay模式是多个Docker主机之间的分布式网络解决方案。</p>
+<p>该网络位于特定于主机的网络之上，允许连接到它的容器（包括群集服务容器）安全地进行通信。</p>
+<p>Docker透明地处理每个数据包与Docker守护程序主机和正确的目标容器之间正确的的路由。 </p>
+<p><img src="http://tu.bossx.club/blog/20191109/rJTXbAU6szE9.png?imageslim" alt="overlay"></p>
+<h3 id="3-2-overlay-网络使用条件"><a href="#3-2-overlay-网络使用条件" class="headerlink" title="3.2 overlay 网络使用条件"></a>3.2 overlay 网络使用条件</h3><ul>
+<li>正常工作的key-value 存储服务，比如 consul、etcd、zookeeper 等</li>
+<li>可以访问到 key-value 服务的主机集群</li>
+<li>集群中的每台机器的hostname都是唯一的</li>
+</ul>
+<h3 id="3-3-overlay-网络模拟"><a href="#3-3-overlay-网络模拟" class="headerlink" title="3.3 overlay 网络模拟"></a>3.3 overlay 网络模拟</h3><h4 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h4><p><strong>主机</strong></p>
+<p>docker-network 10.0.0.10</p>
+<p>docker01 10.0.0.11</p>
+<p>docker02 10.0.0.12</p>
+<p><strong>docker 版本</strong>： Docker version 19.03.4</p>
+<h4 id="启动consul"><a href="#启动consul" class="headerlink" title="启动consul"></a>启动consul</h4><blockquote>
+<p>这里直接使用最简单的<code>docker</code>方式启动</p>
+</blockquote>
+<p>创建一个consul 容器</p>
+<pre class=" language-shell"><code class="language-shell">[root@consul ~]# docker run -d -p 8500:8500 -h consul --name consul progrium/consul -server -bootstrap
+[root@consul ~]# netstat -lntup|grep 8500
+tcp6       0      0 :::8500                 :::*                    LISTEN      9628/docker-proxy  </code></pre>
+<p>容器创建成功后，会启动一个8500端口</p>
+<p>我们通过此端口可以访问consul的web管理界面</p>
+<p><img src="http://tu.bossx.club/blog/20191109/DDMr1kYV1yH2.png?imageslim" alt="consul"></p>
+<h4 id="修改docker-配置文件"><a href="#修改docker-配置文件" class="headerlink" title="修改docker 配置文件"></a>修改docker 配置文件</h4><blockquote>
+<p>–cluster-store 指定 consul 的地址。<br>–cluster-advertise 告知 consul 自己的连接地址。 </p>
+</blockquote>
+<p>docker01 </p>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# vim /etc/docker/daemon.json
+{
+  "hosts":["tcp://0.0.0.0:2376","unix:///var/run/docker.sock"],
+  "cluster-store": "consul://10.0.0.10:8500",
+  "cluster-advertise": "10.0.0.11:2376"
+}
+
+[root@docker01 ~]#  vim /usr/lib/systemd/system/docker.service
+ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock   
+[root@docker01 ~]# systemctl daemon-reload 
+[root@docker01 ~]# systemctl restart docker</code></pre>
+<p>docker02 </p>
+<pre class=" language-shell"><code class="language-shell">[root@docker02 ~]# vim /etc/docker/daemon.json
+{
+  "hosts":["tcp://0.0.0.0:2376","unix:///var/run/docker.sock"],
+  "cluster-store": "consul://10.0.0.10:8500",
+  "cluster-advertise": "10.0.0.12:2376"
+}
+[root@docker02 ~]#  vim /usr/lib/systemd/system/docker.service
+ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock   
+[root@docker02 ~]# systemctl daemon-reload 
+[root@docker02 ~]# systemctl restart docker</code></pre>
+<p>此时 docker01 与docker02 将自动注册到consul 数据库中</p>
+<p><img src="http://tu.bossx.club/blog/20191109/FXo0PQfe1GHD.png" alt></p>
+<h4 id="创建-overlay-网络"><a href="#创建-overlay-网络" class="headerlink" title="创建 overlay 网络"></a>创建 overlay 网络</h4><p>docker01 </p>
+<pre class=" language-shell"><code class="language-shell"> [root@docker01 ~]# docker network create -d overlay --subnet 172.16.2.0/24 --gateway 172.16.2.254  ol1
+ [root@docker01 ~]# docker network ls 
+NETWORK ID          NAME                DRIVER              SCOPE
+7cf8a5332f43        ol1                 overlay             global</code></pre>
+<h4 id="测试网络"><a href="#测试网络" class="headerlink" title="测试网络"></a>测试网络</h4><p>创建容器查看网络</p>
+<blockquote>
+<p>这里需要注意，在overlay网络中，集群中的容器名称必须唯一</p>
+</blockquote>
+<pre class=" language-shell"><code class="language-shell">[root@docker01 ~]# docker run -it --network ol1 --name test01  busybox:latest
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:10:02:01  
+          inet addr:172.16.2.1  Bcast:172.16.2.255  Mask:255.255.255.0
+eth1      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02  
+          inet addr:172.18.0.2  Bcast:172.18.255.255  Mask:255.255.0.0
+
+[root@docker02 ~]# docker run -it --network ol1 --name test02  busybox:latest
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:10:02:02  
+          inet addr:172.16.2.2  Bcast:172.16.2.255  Mask:255.255.255.0
+eth1      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02  
+          inet addr:172.18.0.2  Bcast:172.18.255.255  Mask:255.255.0.0</code></pre>
+<p>连接测试</p>
+<pre class=" language-shell"><code class="language-shell">[root@docker02 ~]# docker run -it --network ol1 --name test02  busybox:latest
+/ # ping 172.16.2.1
+PING 172.16.2.1 (172.16.2.1): 56 data bytes
+64 bytes from 172.16.2.1: seq=0 ttl=64 time=0.399 ms
+64 bytes from 172.16.2.1: seq=1 ttl=64 time=0.373 ms
+/ # ping test01
+PING test01 (172.16.2.1): 56 data bytes
+64 bytes from 172.16.2.1: seq=0 ttl=64 time=0.317 ms
+64 bytes from 172.16.2.1: seq=1 ttl=64 time=0.478 ms
+/ # ping 223.5.5.5
+PING 223.5.5.5 (223.5.5.5): 56 data bytes
+64 bytes from 223.5.5.5: seq=0 ttl=127 time=6.389 ms
+64 bytes from 223.5.5.5: seq=1 ttl=127 time=11.280 ms
+/ # ping 10.0.0.11
+PING 10.0.0.11 (10.0.0.11): 56 data bytes
+64 bytes from 10.0.0.11: seq=0 ttl=63 time=0.455 ms
+/ # ping 10.0.0.10
+PING 10.0.0.10 (10.0.0.10): 56 data bytes
+64 bytes from 10.0.0.10: seq=0 ttl=63 time=0.342 ms</code></pre>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>云计算</tag>
+        <tag>DOCKER</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>云计算之Docker 基础</title>
+    <url>/2019/11/03/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="云计算之Docker-基础"><a href="#云计算之Docker-基础" class="headerlink" title="云计算之Docker 基础"></a>云计算之Docker 基础</h1><h2 id="1、容器的定义"><a href="#1、容器的定义" class="headerlink" title="1、容器的定义"></a>1、容器的定义</h2><ul>
+<li>容器就是在隔离的环境运行的一个进程，如果进程停止，容器就会退出；</li>
+<li>隔离的环境拥有自己的系统文件，ip 地址，主机名等；</li>
+<li>相比虚拟化，容器更加轻便、快捷高效、快速回滚，共用宿主机内核；</li>
+<li>容器是linux内核独有的技术;</li>
+<li>目前最常用的容器 Docker（基于 lxc 重构）。</li>
+</ul><a id="more"></a>
+<h2 id="2、Docker的安装"><a href="#2、Docker的安装" class="headerlink" title="2、Docker的安装"></a>2、Docker的安装</h2><pre class=" language-shell"><code class="language-shell">curl -o /etc/yum.repos.d/docker-ce.repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+sed -i 's#download.docker.com#mirrors.tuna.tsinghua.edu.cn/docker-ce#g' /etc/yum.repos.d/docker-ce.repo
+yum install docker-ce-18.09.9 -y</code></pre>
+<h2 id="3、Docker的组成"><a href="#3、Docker的组成" class="headerlink" title="3、Docker的组成"></a>3、Docker的组成</h2><p>Docker是传统的CS架构分为 docker client 和 docker server；</p>
+<pre class=" language-shell"><code class="language-shell">[root@master ~]# docker version
+Client: Docker Engine - Community
+ Version:           19.03.2
+ API version:       1.39 (downgraded from 1.40)
+ Go version:        go1.12.8
+ Git commit:        6a30dfc
+ Built:             Thu Aug 29 05:28:55 2019
+ OS/Arch:           linux/amd64
+ Experimental:      false
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.9
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.11.13
+  Git commit:       039a7df
+  Built:            Wed Sep  4 16:22:32 2019
+  OS/Arch:          linux/amd64
+  Experimental:     false</code></pre>
+<p>Docker主要组件有：镜像、容器、网络、存储、仓库；</p>
+<p>Docker是一种软件的打包技术。</p>
+<h2 id="4、Docker的使用"><a href="#4、Docker的使用" class="headerlink" title="4、Docker的使用"></a>4、Docker的使用</h2><blockquote>
+<p>Docker容器内的第一个进程（初始命令）必须一直处于前台运行的状态（必须夯住），否则这个容器，就会处于退出状态！</p>
+</blockquote>
+<h3 id="4-1镜像管理"><a href="#4-1镜像管理" class="headerlink" title="4.1镜像管理"></a>4.1镜像管理</h3><p>由于国内网络原因，所以我们需要配置Docker【hub.docker.com】中国官方镜像加速：</p>
+<pre class=" language-shell"><code class="language-shell">vi  /etc/docker/daemon.json
+
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}</code></pre>
+<p><strong>这里我再介绍一种扩展的方法：</strong></p>
+<p>在官方镜像源基础上，使用python脚本将需要pull的（k8s.gcr.io、gcr.io、quay.io、docker.io）镜像自动转到国内代理站下载，下面时python脚本，可以放在/usr/local/bin目录下直接调用即可。</p>
+<pre class=" language-shell"><code class="language-shell">cat >/usr/local/bin/dockerpull<<eof #! usr bin python # coding="utf8" utf8 without bom import os sys gcr.io xxx yyy:zzz -> gcr.azk8s.cn/xxx/yyy:zzz, for example gcr.io/google_containers/kube-apiserver:v1.14.1
+#  k8s.gcr.io/xxx:yyy => gcr.io/google-containers/xxx:yyy -> gcr.azk8s.cn/google-containers/xxx:yyy, for example k8s.gcr.io/kube-apiserver:v1.14.1
+#  quay.io/xxx/yyy:zzz -> quay.azk8s.cn/xxx/yyy:zzz, for example quay.io/coreos/flannel:v0.10.0-amd64
+converts = [
+    {
+        'prefix': 'gcr.io',
+        'replace': lambda x: x.replace('gcr.io', 'gcr.azk8s.cn'),
+    },
+    {
+        'prefix': 'k8s.gcr.io',
+        'replace': lambda x: x.replace('k8s.gcr.io', 'gcr.azk8s.cn/google-containers'),
+    },
+    {
+        'prefix': 'quay.io',
+        'replace': lambda x: x.replace('quay.io', 'quay.azk8s.cn'),
+    }
+]
+def execute_sys_cmd(cmd):
+    result = os.system(cmd)
+    if result != 0:
+        print(cmd + " failed.")
+        sys.exit(-1)
+def usage():
+    print("Usage: " + sys.argv[0] + " pull ${image}")
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        usage()
+        sys.exit(-1)
+    image = sys.argv[2]
+    imageArray = image.split("/") 
+    newImage = '' 
+    for cvt in converts:
+        if imageArray[0] == cvt['prefix']:
+            newImage = cvt['replace'](image)
+            break
+    if newImage:
+        print("-- pull {image} from {newimage} instead --".format(image=image, newimage=newImage))
+        cmd = "docker pull {image}".format(image=newImage)
+        execute_sys_cmd(cmd)
+        cmd = "docker tag {newImage} {image}".format(newImage=newImage, image=image)
+        execute_sys_cmd(cmd)
+        cmd = "docker rmi {newImage}".format(newImage=newImage)
+        execute_sys_cmd(cmd)   
+        print("-- pull {image} done --".format(image=image))
+        sys.exit(0)
+    else:
+        cmd = "docker pull {image}".format(image=image)
+        execute_sys_cmd(cmd)
+        sys.exit(0)
+EOF
+chmod +x /usr/local/bin/dockerpull
+#可以使用如下镜像做下载测试，注意这里版本一定要写正确，如果可以下载则代表镜像站正常：
+dockerpull pull k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1
+dockerpull pull gcr.io/jenkinsxio/prow/crier:v20190510-3f2c8d788
+dockerpull pull quay.io/coreos/etcd:v3.3
+dockerpull pull nginx</eof></code></pre>
+<p><strong>常用的Docker镜像管理命令：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">功能</th>
+<th align="left">命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">拉取镜像</td>
+<td align="left">docker pull [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">镜像列表</td>
+<td align="left">docker images</td>
+</tr>
+<tr>
+<td align="left">导入镜像</td>
+<td align="left">docker load -i [镜像tar包名称]</td>
+</tr>
+<tr>
+<td align="left">导出镜像</td>
+<td align="left">docker save -o [镜像tar包名称] [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">dockerfile自动构建镜像</td>
+<td align="left">docker build -t [镜像名称:版本] [dockerfile文件目录]</td>
+</tr>
+<tr>
+<td align="left">将容器提交为新镜像</td>
+<td align="left">docker commit [容器名称] [新镜像名称:新版本]</td>
+</tr>
+<tr>
+<td align="left">删除镜像</td>
+<td align="left">docker rmi [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">镜像操作记录</td>
+<td align="left">docker history [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">给镜像设置新的仓库</td>
+<td align="left">docker tag [镜像名称:版本] [新镜像名称:新版本]</td>
+</tr>
+<tr>
+<td align="left">查看镜像详细</td>
+<td align="left">docker inspect [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">搜索镜像</td>
+<td align="left">docker search [关键字]</td>
+</tr>
+<tr>
+<td align="left">仓库登录</td>
+<td align="left">docker login</td>
+</tr>
+<tr>
+<td align="left">向仓库推送镜像</td>
+<td align="left">docker push [仓库地址/镜像名称:版本]</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>docker tag 指令得到了一个新的，和原来的镜像一模一样的镜像，后续文谈到私仓非常有用。</p>
+</blockquote>
+<h3 id="4-2容器管理"><a href="#4-2容器管理" class="headerlink" title="4.2容器管理"></a>4.2容器管理</h3><table>
+<thead>
+<tr>
+<th align="left">功能</th>
+<th align="left">命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">启动容器并进入</td>
+<td align="left">docker run -it –name [容器名称] [镜像名称:版本] bash</td>
+</tr>
+<tr>
+<td align="left">容器列表</td>
+<td align="left">docker ps -a (-l –no-trunc)</td>
+</tr>
+<tr>
+<td align="left">显示 Docker 系统信息，包括镜像和容器数</td>
+<td align="left">docker info  【zabbix监控项】</td>
+</tr>
+<tr>
+<td align="left">容器提交为新的镜像</td>
+<td align="left">docker commit [容器名称] my_image:v1.0</td>
+</tr>
+<tr>
+<td align="left">容器后台运行</td>
+<td align="left">docker run -d –name [容器名称] [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">容器结束后自动删除</td>
+<td align="left">docker run –rm –name [容器名称] [镜像名称:版本]</td>
+</tr>
+<tr>
+<td align="left">删除容器</td>
+<td align="left">docker rm [容器名称]</td>
+</tr>
+<tr>
+<td align="left">删除所有停止状态的容器</td>
+<td align="left">docker container prune</td>
+</tr>
+<tr>
+<td align="left">进入容器 exec 【新终端】</td>
+<td align="left">docker exec -it [容器名称] bash</td>
+</tr>
+<tr>
+<td align="left">进入容器 attach</td>
+<td align="left">docker attach –sig-proxy=false [容器名称]</td>
+</tr>
+<tr>
+<td align="left">停止容器</td>
+<td align="left">docker stop [容器名称]</td>
+</tr>
+<tr>
+<td align="left">Docker 日志</td>
+<td align="left">docker logs [容器名称]</td>
+</tr>
+<tr>
+<td align="left">查看容器详细</td>
+<td align="left">docker inspect [容器名称]</td>
+</tr>
+<tr>
+<td align="left">查看容器最近一个进程</td>
+<td align="left">docker top [容器名称]</td>
+</tr>
+<tr>
+<td align="left">继续运行被停止的容器</td>
+<td align="left">docker restart [容器名称]</td>
+</tr>
+<tr>
+<td align="left">暂停一个容器进程</td>
+<td align="left">docker pause [容器名称]</td>
+</tr>
+<tr>
+<td align="left">取消暂停</td>
+<td align="left">docker unpause [容器名称]</td>
+</tr>
+<tr>
+<td align="left">终止容器</td>
+<td align="left">docker kill [容器名称]</td>
+</tr>
+<tr>
+<td align="left">端口映射</td>
+<td align="left">docker run -it –name [容器名称] -p 8080:80 [镜像名称:版本] bash</td>
+</tr>
+<tr>
+<td align="left">容器互联【单方向的】</td>
+<td align="left">docker run -ti –name [容器名称] –link [被互联容器名称]:[容器内名称] nginx:v1.0 bash</td>
+</tr>
+<tr>
+<td align="left">复制容器文件到宿主</td>
+<td align="left">docker cp [容器名称]:[容器内目录] ./</td>
+</tr>
+<tr>
+<td align="left">设置环境变量</td>
+<td align="left">docker run -d -e MYSQL_ROOT_PASSWORD=123456 -p 3306:3306 mysql:5.7</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>docker ps -a -q 其中-q静默输出，可以显示所有容器的id，我们可以利用这个做批量启动、删除等操作，如docker rm -f `docker ps -a -q`可以清空所有容器；</p>
+</blockquote>
+<ul>
+<li><code>exec</code>与 <code>attach</code>登陆容器的区别</li>
+</ul>
+<blockquote>
+<p>在 exec 里面执行 exit 命令，你只是关掉了 exec 命令新开的进程，而主进程依旧在运行，所以容器并不会停止；<br>在 attach 里面运行 exit 命令，你实际是终止了主进程，所以容器也就随之被停止了；</p>
+</blockquote>
+<ul>
+<li><code>-p</code> 端口映射配置</li>
+</ul>
+<blockquote>
+<p>指定映射(docker 会自动添加一条iptables规则来实现端口映射)<br>-p hostPort:containerPort<br>-p ip:hostPort:containerPort     指定IP的端口映射<br>-p ip::containerPort(随机端口)<br>-p hostPort:containerPort/udp<br>-p  10.0.0.100::53/udp   使用宿主机的10.0.0.100这个ip地址的随机端口的udp协议映射容器的udp53端口<br>-p 81:80 –p 443:443 可以指定多个-p</p>
+</blockquote>
+<ul>
+<li><code>-e</code>环境变量配置</li>
+</ul>
+<p>例如MySQL镜像环境变量如下（-e可以有多个）：</p>
+<blockquote>
+<p>MYSQL_ROOT_PASSWORD=xxx<br>#root用户的密码；<br>MYSQL_DATABASE=xxx<br>#运行时需要创建的数据库名称；<br>MYSQL_USER=xxx<br>#运行时需要创建用户名，与MYSQL_PASSWORD一起使用；<br>MYSQL_PASSWORD=xxx<br>#运行时需要创建的用户名对应的密码，与MYSQL_USER一起使用；<br>MYSQL_ALLOW_EMPTY_PASSWORD=yes #不常用<br>#是否允许root用户的密码为空，该参数对应的值为:yes|no；<br>MYSQL_RANDOM_ROOT_PASSWORD=xxx #不常用<br>#为root用户生成随机密码；<br>MYSQL_ONETIME_PASSWORD=xxx #不常用<br>#设置root用户的密码必须在第一次登陆时修改（只对5.6以上的版本支持）；<br>#MYSQL_ROOT_PASSWORD 和 MYSQL_RANDOM_ROOT_PASSWORD 两者必须有且只有一个。</p>
+</blockquote>
+<ul>
+<li><code>--link</code>容器互联配置</li>
+</ul>
+<blockquote>
+<p>容器间互联，这个参数实质就是在容器的/etc/hosts文件中添加解析，而且只在使用–link参数的可以访问，所以这种网络互联是单向的。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>云计算</tag>
+        <tag>DOCKER</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>OSI 七层模式</title>
     <url>/2019/10/29/OSI%20%E4%B8%83%E5%B1%82%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<hr><hr><h3 id="OSI-七层模式"><a href="#OSI-七层模式" class="headerlink" title="OSI 七层模式"></a>OSI 七层模式</h3><p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5Cimage-20191029210227477.png" alt="image-20191029210227477"></p><h3 id="OSI-七层模式详解"><a href="#OSI-七层模式详解" class="headerlink" title="OSI 七层模式详解"></a>OSI 七层模式详解</h3><h5 id="物理层-Physical-Layer"><a href="#物理层-Physical-Layer" class="headerlink" title="物理层/Physical Layer"></a>物理层/Physical Layer</h5><p>物理层规定物理设备，物理线路和设备的触发、维护、关闭物理设备的机械特性</p><p>实际最终的传输也是通过物理层实现的</p><a id="more"></a>
@@ -552,110 +1339,6 @@ done
       </tags>
   </entry>
   <entry>
-    <title>数值运算</title>
-    <url>/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/</url>
-    <content><![CDATA[<p>数值运算</p><pre class=" language-java"><code class="language-java">##只能做整数运算
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">+</span> <span class="token number">10</span>
-<span class="token number">20</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">-</span> <span class="token number">10</span>
-<span class="token number">0</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">*</span> <span class="token number">10</span>
-expr<span class="token operator">:</span> syntax error
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token string">"*"</span> <span class="token number">10</span>
-<span class="token number">100</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> \<span class="token operator">*</span> <span class="token number">10</span>
-<span class="token number">100</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># expr <span class="token number">10</span> <span class="token operator">/</span> <span class="token number">10</span>
-<span class="token number">1</span></code></pre><a id="more"></a>
-
-<pre class=" language-java"><code class="language-java">#只能做整数运算
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let sum<span class="token operator">=</span><span class="token number">10</span><span class="token operator">*</span><span class="token number">10</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># echo $sum
-<span class="token number">100</span>
-
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># sum1<span class="token operator">=</span><span class="token number">10</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># sum2<span class="token operator">=</span><span class="token number">20</span>
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let $sum1<span class="token operator">+</span>$sum2
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># let sum<span class="token operator">=</span>$sum1<span class="token operator">+</span>$sum2
-<span class="token punctuation">[</span>root<span class="token annotation punctuation">@shell</span> <span class="token operator">~</span><span class="token punctuation">]</span># echo $sum
-<span class="token number">30</span></code></pre>
-<pre class=" language-shell"><code class="language-shell">#只能做整数运算，运算符中速度最快的(大量数据时体现)
-[root@shell ~]# echo $((10+10))
-20
-[root@shell ~]# echo $((1-10))
--9
-[root@shell ~]# echo $((2*10))
-20
-[root@shell ~]# echo $((2/10))
-0
-[root@shell ~]# echo $((10/2))
-5
-[root@shell ~]# echo $((10%2))
-0
-[root@shell ~]# echo $((2%10))
-2</code></pre>
-<pre class=" language-shell"><code class="language-shell">#使用bc计算器，可以计算小数
-[root@shell ~]# echo 10*2|bc
-20
-[root@shell ~]# echo 10-2|bc
-8
-[root@shell ~]# echo 10-2.5|bc
-7.5
-[root@shell ~]# echo 10*2.5|bc
-25.0
-[root@shell ~]# echo 10/2.5|bc
-4
-[root@shell ~]# echo 10+2.5|bc
-12.5</code></pre>
-<pre class=" language-shell"><code class="language-shell">#awk进行整数和小数运算
-[root@shell ~]# awk 'BEGIN{print 10-2}'
-8
-[root@shell ~]# awk 'BEGIN{print 10+2}'
-12
-[root@shell ~]# awk 'BEGIN{print 10*2}'
-20
-[root@shell ~]# awk 'BEGIN{print 10/2}'
-5
-[root@shell ~]# awk 'BEGIN{print 10/2.5}'
-4
-[root@shell ~]# awk 'BEGIN{print 10*2.5}'
-25
-[root@shell ~]# awk 'BEGIN{print 10-2.5}'
-7.5</code></pre>
-<pre class=" language-shell"><code class="language-shell">#python运算整数和小数
-[root@shell ~]# python
-Python 2.7.5 (default, Oct 30 2018, 23:45:53) 
-[GCC 4.8.5 20150623 (Red Hat 4.8.5-36)] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
->>> 10+2.5
-12.5
->>> 10-2.5
-7.5
->>> 10/2.5
-4.0
->>> 10*2.5
-25.0</code></pre>
-<p>条件表达式</p>
-<pre class=" language-shell"><code class="language-shell">[ -f file ]    是否为文件
-[ -d dir ]  是否为目录
-[ -e file ] 是否存在
-[ -r fiel]    文件是有可读
-[ -w fiel]    文件是有可写
-[ -x fiel]    文件是可执行</code></pre>
-<p>数值表达式：</p>
-<pre class=" language-shell"><code class="language-shell"> [ 整数1 比较符 整数2 ]
- [ 整数1 -eq 整数2 ] 等于
- [ 整数1 -ne 整数2 ] 不等于
- [ 整数1 -lt 整数2 ] 小于
- [ 整数1 -le 整数2 ] 小于等于
- [ 整数1 -gt 整数2 ] 大于
- [ 整数1 -ge 整数2 ] 小大于等于 
-
- (())  [[]]  = != > >= < <=< code></=<></code></pre>
-<pre class=" language-shell"><code class="language-shell">for ((i=1;i<=9;i++ ));do for ((j="1;j<=i;j++));do" echo -ne "$j\t" done done< code></=9;i++></code></pre>
-]]></content>
-  </entry>
-  <entry>
     <title>云计算基础</title>
     <url>/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/</url>
     <content><![CDATA[<h3 id="什么是云计算"><a href="#什么是云计算" class="headerlink" title="什么是云计算"></a>什么是云计算</h3><p>简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！</p><h3 id="云计算的服务类型"><a href="#云计算的服务类型" class="headerlink" title="云计算的服务类型"></a>云计算的服务类型</h3><p>IAAS 基础设施及服务     虚拟机/ecs/openstack </p><a id="more"></a>
@@ -677,54 +1360,95 @@ Type "help", "copyright", "credits" or "license" for more information.
 <p>内存4G，CPU开启虚拟化</p>
 <p>常规优化：关闭selinux 和firewalld</p>
 <p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png" alt="1567433525738"></p>
-<p>安装软件</p>
+<h4 id="部署KVM"><a href="#部署KVM" class="headerlink" title="部署KVM"></a>部署KVM</h4><p><strong>安装软件</strong></p>
 <pre class=" language-shell"><code class="language-shell">yum install libvirt virt-install qemu-kvm -y
-
-libvirt 作用：虚拟机的管理软件
-libvirt: kvm,xen,qemu,lxc....
-
-virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具
-qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</code></pre>
+# libvirt 作用：虚拟机的管理软件
+# virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具
+#qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</code></pre>
+<h5 id="检查kvm是否正常安装-检查kvm是否嵌入内核"><a href="#检查kvm是否正常安装-检查kvm是否嵌入内核" class="headerlink" title="检查kvm是否正常安装(检查kvm是否嵌入内核)"></a>检查kvm是否正常安装(检查kvm是否嵌入内核)</h5><pre class=" language-BASH"><code class="language-BASH">lsmod|grep kvm
+kvm_intel             183621  0 
+kvm                   586948  1 kvm_intel
+#如果没有kvm和kvm_intel，就手动添加一下(2个modprobe命令)，再次检查，正常后启动libvirtd服务</code></pre>
+<h5 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h5><pre class=" language-bash"><code class="language-bash">systemctl start libvirtd.service
+systemctl status libvirtd.service</code></pre>
 <h4 id="安装一台kvm虚拟机"><a href="#安装一台kvm虚拟机" class="headerlink" title="安装一台kvm虚拟机"></a>安装一台kvm虚拟机</h4><h5 id="安装VNC-Viewer"><a href="#安装VNC-Viewer" class="headerlink" title="安装VNC-Viewer"></a>安装VNC-Viewer</h5><p>PC电脑端安装VNC</p>
 <blockquote>
 <p>VNC 远程控制的软件，与操作系统无关，因此可以跨平台使用。</p>
 </blockquote>
-<h5 id="启动libvirtd"><a href="#启动libvirtd" class="headerlink" title="启动libvirtd"></a>启动libvirtd</h5><pre><code>systemctl start libvirtd.service
-systemctl status libvirtd.service</code></pre><h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><pre class=" language-shell"><code class="language-shell">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --
-vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso
---network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole
+<h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><pre class=" language-shell"><code class="language-shell">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole
 
 
 参数说明：
---virt-type kvm     虚拟化的类型(qemu)
---os-type=linux     系统类型
---os-variant rhel7     系统版本
---name centos7         虚拟机的名字
---memory 1024        虚拟机的内存
---vcpus 1             虚拟cpu的核数
---disk /opt/centos2.raw,format=raw,size=10     设置类型与磁盘大小
---cdrom /opt/CentOS-7-x86_64-DVD-1708.iso     使用的光盘镜像
---network network=default                     使用默认NAT的网络
---graphics vnc,listen=0.0.0.0
+--virt-type           虚拟化的类型(Qemu，VMM、Qemu)
+--os-type=linux      系统类型
+--os-variant rhel7      系统版本
+--name               虚拟机的名字
+--memory 1024         虚拟机的内存
+--vcpus 1              虚拟cpu的核数
+--disk                  设置类型与磁盘大小
+--cdrom             使用的光盘镜像
+--network             指定网络类型
+--graphics vnc,listen=0.0.0.0    监视器（模拟显示器）监听地址，我们可以使用桌面vncviewer连接ip:5900即可访问
 --noautoconsole</code></pre>
-<blockquote>
-<p>选择 第一个，按下<code>TAB</code>键，修改内网名称</p>
-<p>net.ifname=0 biosdevname=0</p>
-</blockquote>
-<p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567435894967.png" alt="1567435894967"></p>
 <blockquote>
 <p>云主机都没有swap分区</p>
 <p>为了提高虚拟机性能，不用创建swap分区</p>
 </blockquote>
-<h5 id><a href="#" class="headerlink" title></a><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567436030501.png" alt="1567436030501"></h5><h4 id="kvm-虚拟机的virsh日常管理和配置"><a href="#kvm-虚拟机的virsh日常管理和配置" class="headerlink" title="kvm 虚拟机的virsh日常管理和配置"></a>kvm 虚拟机的virsh日常管理和配置</h4><p>列表 list</p>
-<pre><code>virsh list            # 列表(只运行或挂载)
-virsh list --all    # 查看所有虚拟机</code></pre><p>开机 start</p>
-<pre><code>virsh start centos7</code></pre><p>关机 shutdown</p>
-<pre><code>virsh shutdown centos7</code></pre><p>拔电源关机 destroy</p>
-<pre><code>virsh destroy centos7</code></pre><p>导出配置文件  dumpxml</p>
-<pre><code>virsh dumpxml centos7  # 只打印到桌面
+<h4 id="kvm-虚拟机的virsh日常管理和配置"><a href="#kvm-虚拟机的virsh日常管理和配置" class="headerlink" title="kvm 虚拟机的virsh日常管理和配置"></a>kvm 虚拟机的virsh日常管理和配置</h4><pre class=" language-shell"><code class="language-shell"># 显示本地活动虚拟机（后面修改查看信息，可使用id号）
+virsh list            # 列表(只运行或挂载)
+virsh list --all    # 查看所有虚拟机
 
-virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>]]></content>
+ Id    Name                           State
+----------------------------------------------------
+ 1     centos7                        running
+
+
+# 启动虚拟机
+virsh start centos7
+# 显示虚拟机基本信息
+virsh dominfo centos7
+# 虚拟机服务（libvirt）启动的时候，就启动虚拟机。相当于开机自启动
+virsh autostart centos7
+# 取消虚拟机服务（libvirt）启动的时候，就启动虚拟机
+virsh autostart --disable centos7
+# 暂停虚拟机
+virsh suspend centos7
+# 启动暂停的虚拟机
+virsh resume centos7
+# 正常关闭虚拟机
+virsh shutdown centos7
+# 强制关闭虚拟机
+virsh destroy centos7
+# 软重启虚拟机,修改了配置需要彻底关闭虚拟机在启动
+virsh snapshot-list centos-7.6
+qemu-img snapshot -l centos-7.6.qcow2
+
+# 列出虚拟机的所有网口
+virsh  domiflist centos7
+# 列出虚拟机所有的块设备
+virsh domblklist centos7 
+
+# 显示虚拟机的当前配置文件，可以使用>重定向到xxx.xml文件，起到备份作用
+virsh dumpxml centos7
+
+# 编辑配置文件(带语法检查)
+virsh edit centos7
+
+# 删除虚拟机，删除之前需要关闭虚拟机
+virsh undefine centos7</code></pre>
+<h4 id="virsh热添加技术（磁盘、网卡、内存、cpu）常用命令"><a href="#virsh热添加技术（磁盘、网卡、内存、cpu）常用命令" class="headerlink" title="virsh热添加技术（磁盘、网卡、内存、cpu）常用命令"></a>virsh热添加技术（磁盘、网卡、内存、cpu）常用命令</h4><blockquote>
+<p>所有热添加如果需要永久生效都需要在后面加 <code>--config</code></p>
+</blockquote>
+<pre><code># 给</code></pre><h4 id="kvm-虚拟机-快照功能"><a href="#kvm-虚拟机-快照功能" class="headerlink" title="kvm 虚拟机 快照功能"></a>kvm 虚拟机 快照功能</h4><blockquote>
+<p>快照配置文件在/var/lib/libvirt/qemu/snapshot/虚拟机名称/ </p>
+<p> kvm虚拟机默认使用raw格式的镜像格式，性能最好，速度最快，</p>
+<p>它的缺点就是不支持一些新的功能，如支持镜像,zlib磁盘压缩,AES加密等。 </p>
+<p> raw磁盘格式的虚拟机不支持快照功能 , 要使用镜像功能，磁盘格式必须为qcow2 </p>
+</blockquote>
+<pre><code># 查看虚拟机快照
+virsh snapshot-list centos7 
+qemu-img snapshot -l centos-7.6.qcow2</code></pre><h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><pre><code>error: unsupported configuration: internal snapshot for disk vda unsupported for storage type raw
+# </code></pre>]]></content>
   </entry>
   <entry>
     <title>Hello World</title>

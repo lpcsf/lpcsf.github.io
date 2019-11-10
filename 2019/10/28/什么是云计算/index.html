@@ -66,9 +66,7 @@
 <meta property="og:description" content="什么是云计算简单的说，云计算是一种按量付费的模式！与计算的底层是通过虚拟化技术来实现的！云计算的服务类型IAAS 基础设施及服务     虚拟机&#x2F;ecs&#x2F;openstack">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png">
-<meta property="og:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567435894967.png">
-<meta property="og:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567436030501.png">
-<meta property="og:updated_time" content="2019-09-05T01:59:07.999Z">
+<meta property="og:updated_time" content="2019-10-31T11:30:47.104Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="e:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png">
   <link rel="canonical" href="http://lpcsf.git.io/2019/10/28/%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%91%E8%AE%A1%E7%AE%97/">
@@ -310,7 +308,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-09-05 09:59:07" itemprop="dateModified" datetime="2019-09-05T09:59:07+08:00">2019-09-05</time>
+                <time title="修改时间：2019-10-31 19:30:47" itemprop="dateModified" datetime="2019-10-31T19:30:47+08:00">2019-10-31</time>
               </span>
             
           
@@ -332,7 +330,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>1.6k</span>
+              <span>2.5k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -342,7 +340,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
           
 
@@ -374,54 +372,95 @@
 <p>内存4G，CPU开启虚拟化</p>
 <p>常规优化：关闭selinux 和firewalld</p>
 <p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567433525738.png" alt="1567433525738"></p>
-<p>安装软件</p>
+<h4 id="部署KVM"><a href="#部署KVM" class="headerlink" title="部署KVM"></a>部署KVM</h4><p><strong>安装软件</strong></p>
 <pre class=" language-shell"><code class="language-shell">yum install libvirt virt-install qemu-kvm -y
-
-libvirt 作用：虚拟机的管理软件
-libvirt: kvm,xen,qemu,lxc....
-
-virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具
-qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</code></pre>
+# libvirt 作用：虚拟机的管理软件
+# virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具
+#qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</code></pre>
+<h5 id="检查kvm是否正常安装-检查kvm是否嵌入内核"><a href="#检查kvm是否正常安装-检查kvm是否嵌入内核" class="headerlink" title="检查kvm是否正常安装(检查kvm是否嵌入内核)"></a>检查kvm是否正常安装(检查kvm是否嵌入内核)</h5><pre class=" language-BASH"><code class="language-BASH">lsmod|grep kvm
+kvm_intel             183621  0 
+kvm                   586948  1 kvm_intel
+#如果没有kvm和kvm_intel，就手动添加一下(2个modprobe命令)，再次检查，正常后启动libvirtd服务</code></pre>
+<h5 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h5><pre class=" language-bash"><code class="language-bash">systemctl start libvirtd.service
+systemctl status libvirtd.service</code></pre>
 <h4 id="安装一台kvm虚拟机"><a href="#安装一台kvm虚拟机" class="headerlink" title="安装一台kvm虚拟机"></a>安装一台kvm虚拟机</h4><h5 id="安装VNC-Viewer"><a href="#安装VNC-Viewer" class="headerlink" title="安装VNC-Viewer"></a>安装VNC-Viewer</h5><p>PC电脑端安装VNC</p>
 <blockquote>
 <p>VNC 远程控制的软件，与操作系统无关，因此可以跨平台使用。</p>
 </blockquote>
-<h5 id="启动libvirtd"><a href="#启动libvirtd" class="headerlink" title="启动libvirtd"></a>启动libvirtd</h5><pre><code>systemctl start libvirtd.service
-systemctl status libvirtd.service</code></pre><h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><pre class=" language-shell"><code class="language-shell">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --
-vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso
---network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole
+<h5 id="将-CentOS-7-6-上传到-opt-目录下"><a href="#将-CentOS-7-6-上传到-opt-目录下" class="headerlink" title="将 CentOS 7.6 上传到/opt 目录下"></a>将 CentOS 7.6 上传到/opt 目录下</h5><h5 id="开始安装虚拟机操作系统"><a href="#开始安装虚拟机操作系统" class="headerlink" title="开始安装虚拟机操作系统"></a>开始安装虚拟机操作系统</h5><pre class=" language-shell"><code class="language-shell">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole
 
 
 参数说明：
---virt-type kvm     虚拟化的类型(qemu)
---os-type=linux     系统类型
---os-variant rhel7     系统版本
---name centos7         虚拟机的名字
---memory 1024        虚拟机的内存
---vcpus 1             虚拟cpu的核数
---disk /opt/centos2.raw,format=raw,size=10     设置类型与磁盘大小
---cdrom /opt/CentOS-7-x86_64-DVD-1708.iso     使用的光盘镜像
---network network=default                     使用默认NAT的网络
---graphics vnc,listen=0.0.0.0
+--virt-type           虚拟化的类型(Qemu，VMM、Qemu)
+--os-type=linux      系统类型
+--os-variant rhel7      系统版本
+--name               虚拟机的名字
+--memory 1024         虚拟机的内存
+--vcpus 1              虚拟cpu的核数
+--disk                  设置类型与磁盘大小
+--cdrom             使用的光盘镜像
+--network             指定网络类型
+--graphics vnc,listen=0.0.0.0    监视器（模拟显示器）监听地址，我们可以使用桌面vncviewer连接ip:5900即可访问
 --noautoconsole</code></pre>
-<blockquote>
-<p>选择 第一个，按下<code>TAB</code>键，修改内网名称</p>
-<p>net.ifname=0 biosdevname=0</p>
-</blockquote>
-<p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567435894967.png" alt="1567435894967"></p>
 <blockquote>
 <p>云主机都没有swap分区</p>
 <p>为了提高虚拟机性能，不用创建swap分区</p>
 </blockquote>
-<h5 id><a href="#" class="headerlink" title></a><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C1567436030501.png" alt="1567436030501"></h5><h4 id="kvm-虚拟机的virsh日常管理和配置"><a href="#kvm-虚拟机的virsh日常管理和配置" class="headerlink" title="kvm 虚拟机的virsh日常管理和配置"></a>kvm 虚拟机的virsh日常管理和配置</h4><p>列表 list</p>
-<pre><code>virsh list            # 列表(只运行或挂载)
-virsh list --all    # 查看所有虚拟机</code></pre><p>开机 start</p>
-<pre><code>virsh start centos7</code></pre><p>关机 shutdown</p>
-<pre><code>virsh shutdown centos7</code></pre><p>拔电源关机 destroy</p>
-<pre><code>virsh destroy centos7</code></pre><p>导出配置文件  dumpxml</p>
-<pre><code>virsh dumpxml centos7  # 只打印到桌面
+<h4 id="kvm-虚拟机的virsh日常管理和配置"><a href="#kvm-虚拟机的virsh日常管理和配置" class="headerlink" title="kvm 虚拟机的virsh日常管理和配置"></a>kvm 虚拟机的virsh日常管理和配置</h4><pre class=" language-shell"><code class="language-shell"># 显示本地活动虚拟机（后面修改查看信息，可使用id号）
+virsh list            # 列表(只运行或挂载)
+virsh list --all    # 查看所有虚拟机
 
-virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
+ Id    Name                           State
+----------------------------------------------------
+ 1     centos7                        running
+
+
+# 启动虚拟机
+virsh start centos7
+# 显示虚拟机基本信息
+virsh dominfo centos7
+# 虚拟机服务（libvirt）启动的时候，就启动虚拟机。相当于开机自启动
+virsh autostart centos7
+# 取消虚拟机服务（libvirt）启动的时候，就启动虚拟机
+virsh autostart --disable centos7
+# 暂停虚拟机
+virsh suspend centos7
+# 启动暂停的虚拟机
+virsh resume centos7
+# 正常关闭虚拟机
+virsh shutdown centos7
+# 强制关闭虚拟机
+virsh destroy centos7
+# 软重启虚拟机,修改了配置需要彻底关闭虚拟机在启动
+virsh snapshot-list centos-7.6
+qemu-img snapshot -l centos-7.6.qcow2
+
+# 列出虚拟机的所有网口
+virsh  domiflist centos7
+# 列出虚拟机所有的块设备
+virsh domblklist centos7 
+
+# 显示虚拟机的当前配置文件，可以使用>重定向到xxx.xml文件，起到备份作用
+virsh dumpxml centos7
+
+# 编辑配置文件(带语法检查)
+virsh edit centos7
+
+# 删除虚拟机，删除之前需要关闭虚拟机
+virsh undefine centos7</code></pre>
+<h4 id="virsh热添加技术（磁盘、网卡、内存、cpu）常用命令"><a href="#virsh热添加技术（磁盘、网卡、内存、cpu）常用命令" class="headerlink" title="virsh热添加技术（磁盘、网卡、内存、cpu）常用命令"></a>virsh热添加技术（磁盘、网卡、内存、cpu）常用命令</h4><blockquote>
+<p>所有热添加如果需要永久生效都需要在后面加 <code>--config</code></p>
+</blockquote>
+<pre><code># 给</code></pre><h4 id="kvm-虚拟机-快照功能"><a href="#kvm-虚拟机-快照功能" class="headerlink" title="kvm 虚拟机 快照功能"></a>kvm 虚拟机 快照功能</h4><blockquote>
+<p>快照配置文件在/var/lib/libvirt/qemu/snapshot/虚拟机名称/ </p>
+<p> kvm虚拟机默认使用raw格式的镜像格式，性能最好，速度最快，</p>
+<p>它的缺点就是不支持一些新的功能，如支持镜像,zlib磁盘压缩,AES加密等。 </p>
+<p> raw磁盘格式的虚拟机不支持快照功能 , 要使用镜像功能，磁盘格式必须为qcow2 </p>
+</blockquote>
+<pre><code># 查看虚拟机快照
+virsh snapshot-list centos7 
+qemu-img snapshot -l centos-7.6.qcow2</code></pre><h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><pre><code>error: unsupported configuration: internal snapshot for disk vda unsupported for storage type raw
+# </code></pre>
     </div>
 
     
@@ -465,8 +504,8 @@ virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2019/10/29/%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97/" rel="prev" title="数值运算">
-                  数值运算 <i class="fa fa-chevron-right"></i>
+                <a href="/2019/10/29/shell%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89/" rel="prev" title="shell数组的定义">
+                  shell数组的定义 <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -513,7 +552,7 @@ virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是云计算"><span class="nav-number">1.</span> <span class="nav-text">什么是云计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云计算的服务类型"><span class="nav-number">2.</span> <span class="nav-text">云计算的服务类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用云计算"><span class="nav-number">3.</span> <span class="nav-text">为什么要用云计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云计算基础-–-KVM虚拟化"><span class="nav-number">4.</span> <span class="nav-text">云计算基础 – KVM虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是虚拟化？"><span class="nav-number">4.1.</span> <span class="nav-text">什么是虚拟化？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟化软件的差别"><span class="nav-number">4.2.</span> <span class="nav-text">虚拟化软件的差别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装KVM虚拟化管理工具"><span class="nav-number">4.3.</span> <span class="nav-text">安装KVM虚拟化管理工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装一台kvm虚拟机"><span class="nav-number">4.4.</span> <span class="nav-text">安装一台kvm虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装VNC-Viewer"><span class="nav-number">4.4.1.</span> <span class="nav-text">安装VNC-Viewer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#启动libvirtd"><span class="nav-number">4.4.2.</span> <span class="nav-text">启动libvirtd</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#将-CentOS-7-6-上传到-opt-目录下"><span class="nav-number">4.4.3.</span> <span class="nav-text">将 CentOS 7.6 上传到/opt 目录下</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#开始安装虚拟机操作系统"><span class="nav-number">4.4.4.</span> <span class="nav-text">开始安装虚拟机操作系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#null"><span class="nav-number">4.4.5.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kvm-虚拟机的virsh日常管理和配置"><span class="nav-number">4.5.</span> <span class="nav-text">kvm 虚拟机的virsh日常管理和配置</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是云计算"><span class="nav-number">1.</span> <span class="nav-text">什么是云计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云计算的服务类型"><span class="nav-number">2.</span> <span class="nav-text">云计算的服务类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用云计算"><span class="nav-number">3.</span> <span class="nav-text">为什么要用云计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云计算基础-–-KVM虚拟化"><span class="nav-number">4.</span> <span class="nav-text">云计算基础 – KVM虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是虚拟化？"><span class="nav-number">4.1.</span> <span class="nav-text">什么是虚拟化？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟化软件的差别"><span class="nav-number">4.2.</span> <span class="nav-text">虚拟化软件的差别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装KVM虚拟化管理工具"><span class="nav-number">4.3.</span> <span class="nav-text">安装KVM虚拟化管理工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部署KVM"><span class="nav-number">4.4.</span> <span class="nav-text">部署KVM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#检查kvm是否正常安装-检查kvm是否嵌入内核"><span class="nav-number">4.4.1.</span> <span class="nav-text">检查kvm是否正常安装(检查kvm是否嵌入内核)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#启动服务"><span class="nav-number">4.4.2.</span> <span class="nav-text">启动服务</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装一台kvm虚拟机"><span class="nav-number">4.5.</span> <span class="nav-text">安装一台kvm虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装VNC-Viewer"><span class="nav-number">4.5.1.</span> <span class="nav-text">安装VNC-Viewer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#将-CentOS-7-6-上传到-opt-目录下"><span class="nav-number">4.5.2.</span> <span class="nav-text">将 CentOS 7.6 上传到/opt 目录下</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#开始安装虚拟机操作系统"><span class="nav-number">4.5.3.</span> <span class="nav-text">开始安装虚拟机操作系统</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kvm-虚拟机的virsh日常管理和配置"><span class="nav-number">4.6.</span> <span class="nav-text">kvm 虚拟机的virsh日常管理和配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#virsh热添加技术（磁盘、网卡、内存、cpu）常用命令"><span class="nav-number">4.7.</span> <span class="nav-text">virsh热添加技术（磁盘、网卡、内存、cpu）常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kvm-虚拟机-快照功能"><span class="nav-number">4.8.</span> <span class="nav-text">kvm 虚拟机 快照功能</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#报错"><span class="nav-number"></span> <span class="nav-text">报错</span></a></div>
         
       </div>
       <!--/noindex-->
@@ -532,7 +571,7 @@ virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -545,7 +584,7 @@ virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
             <a href="/categories/">
           
         
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -558,7 +597,7 @@ virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -605,14 +644,14 @@ virsh dumpxml centos7 &gt; centos7.off.xml</code></pre>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">11k</span>
+    <span title="站点总字数">29k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">19 分钟</span>
+    <span title="站点阅读时长">48 分钟</span>
 </div>
 
         
