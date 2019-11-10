@@ -3,9 +3,7 @@
   <entry>
     <title>云计算之Docker 仓库 </title>
     <url>/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E4%BB%93%E5%BA%93%20/</url>
-    <content><![CDATA[<h1 id="Docker-私有仓库"><a href="#Docker-私有仓库" class="headerlink" title="Docker  私有仓库"></a>Docker  私有仓库</h1><blockquote>
-<p>搭建私有仓库，能使内网的主机加快访问速度，对CI,CD的效率有很大提升。 能有效保护内部代码，防止放到公网泄漏出去。 </p>
-</blockquote><h2 id="一、Docker-registry"><a href="#一、Docker-registry" class="headerlink" title="一、Docker registry"></a>一、Docker registry</h2><a id="more"></a>
+    <content><![CDATA[<h1 id="Docker-私有仓库"><a href="#Docker-私有仓库" class="headerlink" title="Docker  私有仓库"></a>Docker  私有仓库</h1><p>搭建私有仓库，能使内网的主机加快访问速度，对CI,CD的效率有很大提升。 能有效保护内部代码，防止放到公网泄漏出去。 </p><h2 id="一、Docker-registry"><a href="#一、Docker-registry" class="headerlink" title="一、Docker registry"></a>一、Docker registry</h2><a id="more"></a>
 <p> <code>docker-registry</code>是官方提供的工具，可以用于构建私有的镜像仓库。 </p>
 <h3 id="1-1-安装运行-Docker-registry"><a href="#1-1-安装运行-Docker-registry" class="headerlink" title="1.1 安装运行 Docker-registry"></a>1.1 安装运行 Docker-registry</h3><p><strong>docker01上创建私有仓库</strong></p>
 <pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@docker01 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># docker run -d -p 5000:5000 --restart=always --name registry -v /opt/myregistry:/var/lib/registry  registry</span></code></pre>
