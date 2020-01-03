@@ -110,14 +110,14 @@ yum <span class="token function">install</span> -y <span class="token function">
 <span class="token comment" spellcheck="true">#查看代码标签信息,（-n，显示tag信息）</span>
 <span class="token function">git</span> tag -n    </code></pre>
 <h3 id="Git远程仓库"><a href="#Git远程仓库" class="headerlink" title="Git远程仓库"></a>Git远程仓库</h3><h4 id="将远程仓库与本地仓库关联"><a href="#将远程仓库与本地仓库关联" class="headerlink" title="将远程仓库与本地仓库关联"></a>将远程仓库与本地仓库关联</h4><p>gitee创建一个仓库</p>
-<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20191218150131997.png" alt="image-20191218150131997"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/17058164-04d0517e706cbf4e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="创建git仓库"></p>
 <p>生成公钥文件</p>
 <pre><code>[root@gitlab ~/demo]# ssh-keygen 
 [root@gitlab ~/demo]# cat /root/.ssh/id_rsa.pub 
 &gt;&gt;将公钥内容复制</code></pre><p>将公钥添加到gitee</p>
-<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20191218150638981.png" alt="image-20191218150638981"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/17058164-86c3a9bbce08d7b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="添加公钥"></p>
 <p>按照提示操作</p>
-<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20191218151110715.png" alt="image-20191218151110715"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/17058164-33a3276f9c614cf9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="配置仓库"></p>
 <h4 id="提交一个文件至远程仓库"><a href="#提交一个文件至远程仓库" class="headerlink" title="提交一个文件至远程仓库"></a>提交一个文件至远程仓库</h4><pre class=" language-css"><code class="language-css">工作区：   touch file<span class="token number">5</span>
 暂存区：   git add <span class="token number">.</span>
 本地仓库<span class="token punctuation">:</span>  git commit -m <span class="token string">"new file file5"</span>
