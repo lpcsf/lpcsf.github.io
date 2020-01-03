@@ -263,6 +263,120 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lpcsf.git.io/2020/01/03/git%20%E4%B8%8E%20gitlab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ONE_lpc">
+      <meta itemprop="description" content="人一能之,己百之;人十能之,己千之!">
+      <meta itemprop="image" content="/images/angry-birds.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/01/03/git%20%E4%B8%8E%20gitlab/" class="post-title-link" itemprop="url">git 与 gitlab</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-03 15:08:08 / 修改时间：15:07:56" itemprop="dateCreated datePublished" datetime="2020-01-03T15:08:08+08:00">2020-01-03</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>5.1k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>8 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>[TOC]</p><h2 id="版本控制系统概述-git"><a href="#版本控制系统概述-git" class="headerlink" title="版本控制系统概述 git"></a>版本控制系统概述 git</h2><h3 id="Git基本概述"><a href="#Git基本概述" class="headerlink" title="Git基本概述"></a>Git基本概述</h3><p>Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小型到大型项目的所有内容。</p><h3 id="Git安装配置"><a href="#Git安装配置" class="headerlink" title="Git安装配置"></a>Git安装配置</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#安装Git</span>
+yum <span class="token function">install</span> -y <span class="token function">git</span>
+
+<span class="token comment" spellcheck="true">#配置用户信息,用户名称和电子邮件地址，每次 Git提交时都会引用这两条信息，说明是谁提交了更新；    </span>
+<span class="token function">git</span> config --global user.name <span class="token string">"onelpc"</span>    
+<span class="token function">git</span> config --global user.email <span class="token string">"614257760@qq.com"</span>
+<span class="token function">git</span> config --global color.ui <span class="token boolean">true</span>  <span class="token comment" spellcheck="true">#配置颜色，非必须</span>
+
+<span class="token comment" spellcheck="true">#会生成一个配置文件</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cat ~/.gitconfig </span>
+<span class="token punctuation">[</span>user<span class="token punctuation">]</span>
+    name <span class="token operator">=</span> onelpc
+    email <span class="token operator">=</span> 614257760@qq.com
+<span class="token punctuation">[</span>color<span class="token punctuation">]</span>
+    ui <span class="token operator">=</span> <span class="token boolean">true</span></code></pre>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2020/01/03/git%20%E4%B8%8E%20gitlab/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://lpcsf.git.io/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1126,7 +1240,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1199,14 +1313,14 @@
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">24k</span>
+    <span title="站点总字数">29k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">41 分钟</span>
+    <span title="站点阅读时长">49 分钟</span>
 </div>
 
         

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.2">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.2">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.2" color="#222">
+  <link rel="alternate" href="/atom.xml" title="ONE" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.2">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="[TOC]版本控制系统概述 gitGit基本概述Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小型到大型项目的所有内容。Git安装配置#安装Git yum install -y git  #配置用户信息,用户名称和电子邮件地址，每次 Git提交时都会引用这两条信息，说明是谁提交了更新；     git config --global user.name &quot;onelpc&quot;     g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git 与 gitlab">
+<meta property="og:url" content="http:&#x2F;&#x2F;lpcsf.git.io&#x2F;2020&#x2F;01&#x2F;03&#x2F;git%20%E4%B8%8E%20gitlab&#x2F;index.html">
+<meta property="og:site_name" content="ONE">
+<meta property="og:description" content="[TOC]版本控制系统概述 gitGit基本概述Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小型到大型项目的所有内容。Git安装配置#安装Git yum install -y git  #配置用户信息,用户名称和电子邮件地址，每次 Git提交时都会引用这两条信息，说明是谁提交了更新；     git config --global user.name &quot;onelpc&quot;     g">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="e:&#x2F;%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0&#x2F;md%E5%9B%BE%E7%89%87&#x2F;assets&#x2F;image-20191218150131997.png">
+<meta property="og:image" content="e:&#x2F;%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0&#x2F;md%E5%9B%BE%E7%89%87&#x2F;assets&#x2F;image-20191218150638981.png">
+<meta property="og:image" content="e:&#x2F;%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0&#x2F;md%E5%9B%BE%E7%89%87&#x2F;assets&#x2F;image-20191218151110715.png">
+<meta property="og:updated_time" content="2020-01-03T07:07:56.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="e:&#x2F;%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0&#x2F;md%E5%9B%BE%E7%89%87&#x2F;assets&#x2F;image-20191218150131997.png">
+  <link rel="canonical" href="http://lpcsf.git.io/2020/01/03/git%20%E4%B8%8E%20gitlab/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>git 与 gitlab | ONE</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ONE</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+    
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+          <i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lpcsf.git.io/2020/01/03/git%20%E4%B8%8E%20gitlab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ONE_lpc">
+      <meta itemprop="description" content="人一能之,己百之;人十能之,己千之!">
+      <meta itemprop="image" content="/images/angry-birds.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            git 与 gitlab
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-03 15:08:08 / 修改时间：15:07:56" itemprop="dateCreated datePublished" datetime="2020-01-03T15:08:08+08:00">2020-01-03</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>5.1k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>8 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>[TOC]</p><h2 id="版本控制系统概述-git"><a href="#版本控制系统概述-git" class="headerlink" title="版本控制系统概述 git"></a>版本控制系统概述 git</h2><h3 id="Git基本概述"><a href="#Git基本概述" class="headerlink" title="Git基本概述"></a>Git基本概述</h3><p>Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小型到大型项目的所有内容。</p><h3 id="Git安装配置"><a href="#Git安装配置" class="headerlink" title="Git安装配置"></a>Git安装配置</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#安装Git</span>
+yum <span class="token function">install</span> -y <span class="token function">git</span>
+
+<span class="token comment" spellcheck="true">#配置用户信息,用户名称和电子邮件地址，每次 Git提交时都会引用这两条信息，说明是谁提交了更新；    </span>
+<span class="token function">git</span> config --global user.name <span class="token string">"onelpc"</span>    
+<span class="token function">git</span> config --global user.email <span class="token string">"614257760@qq.com"</span>
+<span class="token function">git</span> config --global color.ui <span class="token boolean">true</span>  <span class="token comment" spellcheck="true">#配置颜色，非必须</span>
+
+<span class="token comment" spellcheck="true">#会生成一个配置文件</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cat ~/.gitconfig </span>
+<span class="token punctuation">[</span>user<span class="token punctuation">]</span>
+    name <span class="token operator">=</span> onelpc
+    email <span class="token operator">=</span> 614257760@qq.com
+<span class="token punctuation">[</span>color<span class="token punctuation">]</span>
+    ui <span class="token operator">=</span> <span class="token boolean">true</span></code></pre><a id="more"></a>
+
+
+<h3 id="Git基本命令"><a href="#Git基本命令" class="headerlink" title="Git基本命令"></a>Git基本命令</h3><pre class=" language-bash"><code class="language-bash">   add       <span class="token comment" spellcheck="true">#添加文件内容至索引</span>
+   bisect     <span class="token comment" spellcheck="true">#通过二分查找定位引入 bug 的变更</span>
+   branch    <span class="token comment" spellcheck="true">#列出、创建或删除分支</span>
+   checkout  <span class="token comment" spellcheck="true">#检出一个分支或路径到工作区</span>
+   clone      <span class="token comment" spellcheck="true">#克隆一个版本库到一个新目录</span>
+   commit       <span class="token comment" spellcheck="true">#记录变更到版本库</span>
+   <span class="token function">diff</span>       <span class="token comment" spellcheck="true">#显示提交之间、提交和工作区之间等的差异</span>
+   fetch       <span class="token comment" spellcheck="true">#从另外一个版本库下载对象和引用</span>
+   <span class="token function">grep</span>      <span class="token comment" spellcheck="true">#输出和模式匹配的行</span>
+   init      <span class="token comment" spellcheck="true">#创建一个空的 Git 版本库或重新初始化一个已存在的版本库</span>
+   log       <span class="token comment" spellcheck="true">#显示提交日志</span>
+   merge     <span class="token comment" spellcheck="true">#合并两个或更多开发历史</span>
+   <span class="token function">mv</span>           <span class="token comment" spellcheck="true">#移动或重命名一个文件、目录或符号链接</span>
+   pull       <span class="token comment" spellcheck="true">#获取并合并另外的版本库或一个本地分支</span>
+   push       <span class="token comment" spellcheck="true">#更新远程引用和相关的对象</span>
+   rebase    <span class="token comment" spellcheck="true">#本地提交转移至更新后的上游分支中</span>
+   reset       <span class="token comment" spellcheck="true">#重置当前HEAD到指定状态</span>
+   <span class="token function">rm</span>           <span class="token comment" spellcheck="true">#从工作区和索引中删除文件</span>
+   show       <span class="token comment" spellcheck="true">#显示各种类型的对象</span>
+   status    <span class="token comment" spellcheck="true">#显示工作区状态</span>
+   tag       <span class="token comment" spellcheck="true">#创建、列出、删除或校验一个GPG签名的 tag 对象</span></code></pre>
+<h3 id="Git基本操作"><a href="#Git基本操作" class="headerlink" title="Git基本操作"></a>Git基本操作</h3><p>创建git本地仓库</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#创建本地工作目录</span>
+<span class="token function">mkdir</span> /demo
+<span class="token function">cd</span> /demo/
+
+<span class="token comment" spellcheck="true">#初始化为git工作目录</span>
+<span class="token function">git</span> init </code></pre>
+<p>提交数据</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#提交文件到缓存区，</span>
+<span class="token function">git</span> add file1
+<span class="token function">git</span> add <span class="token keyword">.</span>   //点<span class="token punctuation">(</span>.<span class="token punctuation">)</span>代表当前目录下所有文件
+
+<span class="token comment" spellcheck="true">#提交文件到本地仓库</span>
+<span class="token function">git</span> commit -m <span class="token string">"添加file1"</span>
+
+<span class="token comment" spellcheck="true">#当我们修改了很多文件，而不想每一个都add，想commit自动来提交本地修改(-a参数不会造成新文件被提交，只能修改)</span>
+<span class="token function">git</span> commit -a -m <span class="token string">"修改了xxx等x个文件"</span></code></pre>
+<p>移动数据</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">git</span> <span class="token function">mv</span> file1 file4  <span class="token comment" spellcheck="true">#修改文件名称</span>
+<span class="token function">git</span> commit -m <span class="token string">'change file name'</span> <span class="token comment" spellcheck="true">#提交</span></code></pre>
+<p>对比数据</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#本地文件与缓冲区文件对比</span>
+<span class="token function">git</span> <span class="token function">diff</span> file1
+
+<span class="token comment" spellcheck="true">#缓冲区文件与仓库文件对比</span>
+<span class="token function">git</span> <span class="token function">diff</span> --cached file1</code></pre>
+<p>撤销修改的文件</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#提交到缓冲的区文件撤回</span>
+<span class="token function">git</span> reset HEAD filename
+
+<span class="token comment" spellcheck="true">#未add到缓冲区的文件撤回</span>
+<span class="token function">git</span> checkout filename</code></pre>
+<p>查看版本与回退</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#查看现在版本</span>
+<span class="token function">git</span> log --oneline
+<span class="token function">git</span> reset --hard 942bdf3
+
+<span class="token comment" spellcheck="true">#查看所有历史版本</span>
+<span class="token function">git</span> reflog --oneline
+<span class="token function">git</span> reset --hard 942bdf3</code></pre>
+<h3 id="Git分支管理"><a href="#Git分支管理" class="headerlink" title="Git分支管理"></a>Git分支管理</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#增加一个新分支</span>
+<span class="token function">git</span> branch dev01
+
+<span class="token comment" spellcheck="true">#切换分支</span>
+<span class="token function">git</span> checkout  dev01
+
+<span class="token comment" spellcheck="true">#查看当前分支情况/所在分支(*代表当前所在)</span>
+<span class="token function">git</span> branch
+
+<span class="token comment" spellcheck="true">#切回主分支</span>
+<span class="token function">git</span> checkout  master
+
+<span class="token comment" spellcheck="true">#在主分支合并dev01分支</span>
+<span class="token function">git</span> merge dev01  -m <span class="token string">'注释'</span>
+
+<span class="token comment" spellcheck="true">#删除dev01分支</span>
+<span class="token function">git</span> branch -d dev01</code></pre>
+<h3 id="Git标签管理"><a href="#Git标签管理" class="headerlink" title="Git标签管理"></a>Git标签管理</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#给当前版本打标签</span>
+<span class="token function">git</span> tag v1.2 
+
+<span class="token comment" spellcheck="true">#删除标签</span>
+<span class="token function">git</span>  tag  -d  v1.2
+
+<span class="token comment" spellcheck="true">#给任意版本打标签</span>
+<span class="token function">git</span> tag  -a v1.0  -m  <span class="token string">'优化了1111  修复bug'</span>  a119962 
+
+<span class="token comment" spellcheck="true">#查看代码标签信息,（-n，显示tag信息）</span>
+<span class="token function">git</span> tag -n    </code></pre>
+<h3 id="Git远程仓库"><a href="#Git远程仓库" class="headerlink" title="Git远程仓库"></a>Git远程仓库</h3><h4 id="将远程仓库与本地仓库关联"><a href="#将远程仓库与本地仓库关联" class="headerlink" title="将远程仓库与本地仓库关联"></a>将远程仓库与本地仓库关联</h4><p>gitee创建一个仓库</p>
+<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20191218150131997.png" alt="image-20191218150131997"></p>
+<p>生成公钥文件</p>
+<pre><code>[root@gitlab ~/demo]# ssh-keygen 
+[root@gitlab ~/demo]# cat /root/.ssh/id_rsa.pub 
+&gt;&gt;将公钥内容复制</code></pre><p>将公钥添加到gitee</p>
+<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20191218150638981.png" alt="image-20191218150638981"></p>
+<p>按照提示操作</p>
+<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20191218151110715.png" alt="image-20191218151110715"></p>
+<h4 id="提交一个文件至远程仓库"><a href="#提交一个文件至远程仓库" class="headerlink" title="提交一个文件至远程仓库"></a>提交一个文件至远程仓库</h4><pre class=" language-css"><code class="language-css">工作区：   touch file<span class="token number">5</span>
+暂存区：   git add <span class="token number">.</span>
+本地仓库<span class="token punctuation">:</span>  git commit -m <span class="token string">"new file file5"</span>
+远程仓库<span class="token punctuation">:</span>  git push origin master     </code></pre>
+<h2 id="Gitlab仓库"><a href="#Gitlab仓库" class="headerlink" title="Gitlab仓库"></a>Gitlab仓库</h2><h3 id="Gitlab介绍"><a href="#Gitlab介绍" class="headerlink" title="Gitlab介绍"></a>Gitlab介绍</h3><p>gitlab是一个开源仓库,社区版ce，企业版ee.（基于git基础上开发）</p>
+<h3 id="gitlab-部署"><a href="#gitlab-部署" class="headerlink" title="gitlab 部署"></a>gitlab 部署</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#下载gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># wget https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7/gitlab-ce-12.3.0-ce.0.el7.x86_64.rpm</span>
+
+<span class="token comment" spellcheck="true">#安装gitlab 依赖</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install -y curl openssh-server openssh-clients postfix cronie policycoreutils-python</span>
+<span class="token comment" spellcheck="true">#安装gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum localinstall -y gitlab-ce-12.3.0-ce.0.el7.x86_64.rpm</span>
+
+<span class="token comment" spellcheck="true">#配置gitlab</span>
+1.备份gitlab配置文件
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># cp -v /etc/gitlab/{gitlab.rb,gitlab.rb_bak}</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim /etc/gitlab/gitlab.rb</span>
+2.修改gitlab访问的url 
+external_url <span class="token string">'http://gitlab.oldxu.com'</span>
+3.关闭一些没有用程序
+prometheus<span class="token punctuation">[</span><span class="token string">'enable'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">false</span>
+prometheus_monitoring<span class="token punctuation">[</span><span class="token string">'enable'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">false</span>
+4.配置邮箱
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'gitlab_email_enabled'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'gitlab_email_from'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"614257760@qq.com"</span>  <span class="token comment" spellcheck="true"># 发件邮箱</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'gitlab_email_display_name'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'OneLpc'</span> <span class="token comment" spellcheck="true"># 发件人显示名称</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_enable'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_address'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"smtp.qq.com"</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_port'</span><span class="token punctuation">]</span> <span class="token operator">=</span> 465
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_user_name'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"614257760@qq.com"</span> <span class="token comment" spellcheck="true">#发件人邮箱账户</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_password'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"qweasdzxc"</span>  <span class="token comment" spellcheck="true">#发件人邮箱客户端授权码</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_domain'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"qq.com"</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_authentication'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"login"</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_enable_starttls_auto'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'smtp_tls'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+
+<span class="token comment" spellcheck="true">#初始化gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl reconfigure</span>
+
+<span class="token comment" spellcheck="true">#启动 gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl start</span>
+
+浏览器访问，设置密码</code></pre>
+<h3 id="Gitlab汉化"><a href="#Gitlab汉化" class="headerlink" title="Gitlab汉化"></a>Gitlab汉化</h3><blockquote>
+<p>汉化包下载地址：<a href="https://gitlab.com/xhang/gitlab" target="_blank" rel="noopener">https://gitlab.com/xhang/gitlab</a></p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#停止gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl stop</span>
+
+<span class="token comment" spellcheck="true">#备份原文件</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># \cp -rp /opt/gitlab/embedded/service/gitlab-rails{,.bak_$(date +%F)}</span>
+
+<span class="token comment" spellcheck="true">#替换语言包</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># tar xf gitlab-12-0-stable-zh.tar.gz</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># \cp -r gitlab-12-0-stable-zh/* /opt/gitlab/embedded/service/gitlab-rails/</span>
+
+<span class="token comment" spellcheck="true">#重新加载gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl reconfigure</span>
+
+<span class="token comment" spellcheck="true">#启动gitlab</span>
+<span class="token punctuation">[</span>root@gitlab ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl start</span>
+
+<span class="token comment" spellcheck="true">#访问gitlab网站设置语句</span>
+选择右上角---<span class="token operator">></span>setttings---》Preferences --<span class="token operator">></span>Language</code></pre>
+<h3 id="Gitlab备份"><a href="#Gitlab备份" class="headerlink" title="Gitlab备份"></a>Gitlab备份</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#手动备份</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-rake gitlab:backup:create</span>
+<span class="token operator">>></span>默认的备份目录：<span class="token variable"><span class="token variable">`</span>/var/opt/gitlab/backups<span class="token variable">`</span></span>目录下tar的压缩包
+
+
+<span class="token comment" spellcheck="true">#修改gitlab备份目录</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># vim /etc/gitlab/gitlab.rb</span>
+<span class="token punctuation">..</span>.
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'backup_path'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"/data/gitlab/backups"</span>        <span class="token comment" spellcheck="true">#控制备份后的产物放在哪里    </span>
+gitlab_rails<span class="token punctuation">[</span><span class="token string">'backup_keep_time'</span><span class="token punctuation">]</span> <span class="token operator">=</span> 604800                   <span class="token comment" spellcheck="true">#保留多久的数据</span>
+<span class="token punctuation">..</span>.
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl reconfigure</span></code></pre>
+<h3 id="Gitlab-数据恢复"><a href="#Gitlab-数据恢复" class="headerlink" title="Gitlab 数据恢复"></a>Gitlab 数据恢复</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 停止相关数据连接服务</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl stop unicorn</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl stop sidekiq</span>
+
+<span class="token comment" spellcheck="true"># 从1576659867_2019_12_18_12.3.5编号备份中恢复</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-rake gitlab:backup:restore BACKUP=1576659867_2019_12_18_12.3.5</span>
+
+<span class="token comment" spellcheck="true"># 启动Gitlab</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl start</span></code></pre>
+<h3 id="Gitlab迁移"><a href="#Gitlab迁移" class="headerlink" title="Gitlab迁移"></a>Gitlab迁移</h3><p>迁移如同备份与恢复的步骤一样, 只需要将老服务器备份文件拷贝到新服务器上<br>需要注意的是新服务器上的<code>Gitlab</code>的版本必须与创建备份时的<code>Gitlab</code>版本号相同.</p>
+<h3 id="Gitlab升级"><a href="#Gitlab升级" class="headerlink" title="Gitlab升级"></a>Gitlab升级</h3><p>关闭 gitlab 服务</p>
+<pre><code>[root@gitlab-ce ~]# gitlab-ctl stop unicorn
+[root@gitlab-ce ~]# gitlab-ctl stop sidekiq
+[root@gitlab-ce ~]# gitlab-ctl stop nginx</code></pre><p>备份gitlab 数据</p>
+<pre><code>[root@gitlab-ce ~]# gitlab-rake gitlab:backup:create</code></pre><p>安装新版本的rpm包</p>
+<pre class=" language-bash"><code class="language-bash">//直接安装
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install gitlab-ce-12.3.0-ce.0.el7.x86_64.rpm</span>
+
+//报错.
+Error executing action <span class="token variable"><span class="token variable">`</span>run<span class="token variable">`</span></span> on resource <span class="token string">'ruby_block[directory resource: /var/opt/gitlab/git-data/repositories]'</span>
+
+//解决方法:
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># chmod 2770 /var/opt/gitlab/git-data/repositories</span></code></pre>
+<p>启动gitlab</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl reconfigure</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gitlab-ctl restart</span>
+<span class="token punctuation">[</span>root@gitlab-ce ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># head -1 /opt/gitlab/version-manifest.txt</span>
+gitlab-ce 12.3.0</code></pre>
+<h3 id="Gitlab更改默认Nginx"><a href="#Gitlab更改默认Nginx" class="headerlink" title="Gitlab更改默认Nginx"></a>Gitlab更改默认Nginx</h3><p>略</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ONE_lpc
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lpcsf.git.io/2020/01/03/git%20%E4%B8%8E%20gitlab/" title="git 与 gitlab">http://lpcsf.git.io/2020/01/03/git%20%E4%B8%8E%20gitlab/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/10/%E4%BA%91%E8%AE%A1%E7%AE%97%E4%B9%8BDocker%20%E7%BD%91%E7%BB%9C/" rel="next" title="云计算之Docker 网络">
+                  <i class="fa fa-chevron-left"></i> 云计算之Docker 网络
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#版本控制系统概述-git"><span class="nav-number">1.</span> <span class="nav-text">版本控制系统概述 git</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Git基本概述"><span class="nav-number">1.1.</span> <span class="nav-text">Git基本概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git安装配置"><span class="nav-number">1.2.</span> <span class="nav-text">Git安装配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git基本命令"><span class="nav-number">1.3.</span> <span class="nav-text">Git基本命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git基本操作"><span class="nav-number">1.4.</span> <span class="nav-text">Git基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git分支管理"><span class="nav-number">1.5.</span> <span class="nav-text">Git分支管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git标签管理"><span class="nav-number">1.6.</span> <span class="nav-text">Git标签管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git远程仓库"><span class="nav-number">1.7.</span> <span class="nav-text">Git远程仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#将远程仓库与本地仓库关联"><span class="nav-number">1.7.1.</span> <span class="nav-text">将远程仓库与本地仓库关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提交一个文件至远程仓库"><span class="nav-number">1.7.2.</span> <span class="nav-text">提交一个文件至远程仓库</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gitlab仓库"><span class="nav-number">2.</span> <span class="nav-text">Gitlab仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab介绍"><span class="nav-number">2.1.</span> <span class="nav-text">Gitlab介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gitlab-部署"><span class="nav-number">2.2.</span> <span class="nav-text">gitlab 部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab汉化"><span class="nav-number">2.3.</span> <span class="nav-text">Gitlab汉化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab备份"><span class="nav-number">2.4.</span> <span class="nav-text">Gitlab备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab-数据恢复"><span class="nav-number">2.5.</span> <span class="nav-text">Gitlab 数据恢复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab迁移"><span class="nav-number">2.6.</span> <span class="nav-text">Gitlab迁移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab升级"><span class="nav-number">2.7.</span> <span class="nav-text">Gitlab升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gitlab更改默认Nginx"><span class="nav-number">2.8.</span> <span class="nav-text">Gitlab更改默认Nginx</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/angry-birds.png"
+      alt="ONE_lpc">
+  <p class="site-author-name" itemprop="name">ONE_lpc</p>
+  <div class="site-description" itemprop="description">人一能之,己百之;人十能之,己千之!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ONE</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">29k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">49 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.2"></script><script src="/js/motion.js?v=7.4.2"></script>
+<script src="/js/schemes/pisces.js?v=7.4.2"></script>
+
+<script src="/js/next-boot.js?v=7.4.2"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.4.2"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
