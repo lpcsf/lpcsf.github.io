@@ -1,6 +1,310 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GlusterFS</title>
+    <url>/2020/02/28/GlusterFS/</url>
+    <content><![CDATA[<p>[TOC]</p><h2 id="什么是-GlusterFS"><a href="#什么是-GlusterFS" class="headerlink" title="什么是 GlusterFS"></a>什么是 GlusterFS</h2><h3 id="GlusterFS-概述"><a href="#GlusterFS-概述" class="headerlink" title="GlusterFS 概述"></a>GlusterFS 概述</h3><p>GlusterFS (Gluster File System) 是一个开源的分布式文件系统，主要由 Z RESEARCH 公司负责开发。GlusterFS 是 Scale-Out 存储解决方案 Gluster 的核心，具有强大的横向扩展能力，通过扩展能够支持数PB存储容量和处理数千客户端。GlusterFS 借助 TCP/IP 或 InfiniBand RDMA 网络将物理分布的存储资源聚集在一起，使用单一全局命名空间来管理数据。GlusterFS 基于可堆叠的用户空间设计，可为各种不同的数据负载提供优异的性能。</p><a id="more"></a>
+
+<p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5Cimage-20200227142148091.png" alt="image-20200227142148091"></p>
+<h3 id="GlusterFS-特性"><a href="#GlusterFS-特性" class="headerlink" title="GlusterFS 特性"></a>GlusterFS 特性</h3><ul>
+<li><p>扩展性与高性能</p>
+<p>Scale-Out架构允许通过简单地增加资源来提高存储容量和性能，磁盘、计算和I/O资源都可以独立增加，支持10GbE和InfiniBand等高速网络互联。Gluster弹性哈希（Elastic Hash）解除了GlusterFS对元数据服务器的需求，消除了单点故障和性能瓶颈，真正实现了并行化数据访问。</p>
+</li>
+<li><p>高可用性</p>
+<p>GlusterFS可以对文件进行自动复制，如镜像或多次复制，从而确保数据总是可以访问，甚至是在硬件故障的情况下也能正常访问。自我修复功能能够把数据恢复到正确的状态，而且修复是以增量的方式在后台执行，几乎不会产生性能负载。GlusterFS没有设计自己的私有数据文件格式，而是采用操作系统中主流标准的磁盘文件系统（如EXT3、ZFS）来存储文件，因此数据可以使用各种标准工具进行复制和访问。</p>
+</li>
+<li><p>全局统一命名空间</p>
+<p>全局统一命名空间将磁盘和内存资源聚集成一个单一的虚拟存储池，对上层用户和应用屏蔽了底层的物理硬件。存储资源可以根据需要在虚拟存储池中进行弹性扩展， 比如扩容或收缩。当存储虚拟机映像时，存储的虚拟映像文件没有数量限制，成千虚拟机均通过单一挂载点进行数据共享。虚拟机I/O可在命名空间内的所有服务器上自动进行负载均衡，消除了SAN环境中经常发生的访问热点和性能瓶颈问题。</p>
+</li>
+<li><p>弹性哈希算法</p>
+<p>GlusterFS采用弹性哈希算法在存储池中定位数据，而不是采用集中式或分布式元数据服务器索引。在其他的Scale-Out存储系统中，元数据服务器通常会导致I/O性能瓶颈和单点故障问题。GlusterFS中，所有在Scale-Out存储配置中的存储系统都可以智能地定位任意数据分片，不需要查看索引或者向其他服务器查询。这种设计机制完全并行化了数据访问，实现了真正的线性性能扩展。</p>
+</li>
+<li><p>弹性卷管理</p>
+<p>数 据储存在逻辑卷中，逻辑卷可以从虚拟化的物理存储池进行独立逻辑划分而得到。存储服务器可以在线进行增加和移除，不会导致应用中断。逻辑卷可以在所有配置 服务器中增长和缩减，可以在不同服务器迁移进行容量均衡，或者增加和移除系统，这些操作都可在线进行。文件系统配置更改也可以实时在线进行并应用，从而可 以适应工作负载条件变化或在线性能调优。</p>
+</li>
+<li><p>基于标准协议</p>
+<p>Gluster存储服务支持NFS, CIFS, HTTP, FTP以及Gluster原生协议，完全与POSIX标准兼容。现有应用程序不需要作任何修改或使用专用API，就可以对Gluster中的数据进行访问。这在公有云环境中部署Gluster时非常有用，Gluster对云服务提供商专用API进行抽象，然后提供标准POSIX接口。</p>
+</li>
+</ul>
+<h3 id="GlusterFS-架构介绍"><a href="#GlusterFS-架构介绍" class="headerlink" title="GlusterFS 架构介绍"></a>GlusterFS 架构介绍</h3><p>它主要由存储服务器（BrickServer）、客户端以及NFS/Samba 存储网关组成。不难发现，<font color="red">GlusterFS 架构中没有元数据服务器组件</font>，这是其最大的设计这点，对于提升整个系统的性能、可靠性和稳定性都有着决定性的意义。GlusterFS 支持TCP/IP 和InfiniBandRDMA 高速网络互联，客户端可通过原生Glusterfs 协议访问数据，其他没有运行GlusterFS客户端的终端可通过NFS/CIFS 标准协议通过存储网关访问数据。</p>
+<p><img src="https://s5.51cto.com/wyfs02/M01/84/07/wKiom1eDiHjA-6YjAAW6vXeeVEE704.png" alt="img"></p>
+<h3 id="GlusterFS-客户端访问流程"><a href="#GlusterFS-客户端访问流程" class="headerlink" title="GlusterFS  客户端访问流程"></a>GlusterFS  客户端访问流程</h3><p>当客户端访问GlusterFS存储时，首先程序通过访问挂载点的形式读写数据，对于用户和程序而言，集群文件系统是透明的，用户和程序根本感觉不到文件系统是本地还是在远程服务器上。读写操作将会被交给VFS(Virtual File System)来处理，VFS会将请求交给FUSE内核模块，而FUSE又会通过设备/dev/fuse将数据交给GlusterFS Client。最后经过GlusterFS Client的计算，并最终经过网络将请求或数据发送到GlusterFS Server上。</p>
+<p><img src="https://img2018.cnblogs.com/blog/1551426/201901/1551426-20190112015721994-73981722.png" alt="img"></p>
+<h3 id="GlusterFS-专业术语"><a href="#GlusterFS-专业术语" class="headerlink" title="GlusterFS 专业术语"></a>GlusterFS 专业术语</h3><p><strong>Brick（存储卡）</strong>：存储池中节点对外提供存储服务的目录</p>
+<p><strong>Volume （逻辑卷）</strong>：一个逻辑卷是一组 Brick 的集合，卷是数据存储的逻辑设备，类似LVM 中的逻辑卷，大部分 GlusterFS 管理操作都是在逻辑卷上操作的</p>
+<p><strong>FUSE（用户空间文件系统）</strong>：是一个内核模块，用户自行创建挂载的文件系统</p>
+<p><strong>VFS（接口）</strong>：内核空间对用户控件提供的访问磁盘的接口</p>
+<p><strong>Glusterd（后台管理进程）</strong>：在存储集群中的每个节点上都要运行</p>
+<h3 id="GlusterFS-集群的模式"><a href="#GlusterFS-集群的模式" class="headerlink" title="GlusterFS 集群的模式"></a>GlusterFS 集群的模式</h3><p>GlusterFS 集群的模式只数据在集群中的存放结构，类似于磁盘阵列中的级别。</p>
+<h4 id="分布式卷（Distributed-Volume）"><a href="#分布式卷（Distributed-Volume）" class="headerlink" title="分布式卷（Distributed Volume）"></a>分布式卷（Distributed Volume）</h4><p>GlusterFS的默认卷，在创建卷时，默认选项是创建分布式卷。又称哈希卷，近似于RAID0，文件没有分片，文件根据hash算法写入各个节点的硬盘上，优点是<strong>容量大</strong>，缺点是<strong>没冗余</strong>。</p>
+<pre><code># gluster volume create test-volume server1:/exp1 server2:/exp2 server3:/exp3 server4:/exp4</code></pre><p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5Cac0a300c-ef5f-11e4-8599-e7d06de1165c.png" alt="ac0a300c-ef5f-11e4-8599-e7d06de1165c"></p>
+<h4 id="复制卷（Replicated-Volume）"><a href="#复制卷（Replicated-Volume）" class="headerlink" title="复制卷（Replicated Volume）"></a>复制卷（Replicated Volume）</h4><p>相当于RAD1，即同一文件保存一份或多份副本。每个节点上保存相同的内容和目录结构。复制模式因为要保存副本，所以磁盘利用率较低，复制卷时，复制数必须等于卷中Brick所包含的存储服务器数，复制卷<strong>具备冗余性</strong>，即使一个节点损坏，也不影响数据的正常使用；</p>
+<p><img src="https://cloud.githubusercontent.com/assets/10970993/7412379/d75272a6-ef5f-11e4-869a-c355e8505747.png" alt="复制卷"></p>
+<p>创建方法</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># gluster volume create test-volume replica 3 transport tcp server1:/exp1 server2:/exp2 </span></code></pre>
+<h4 id="分布式复制卷（Distributed-Replicated-Volume）"><a href="#分布式复制卷（Distributed-Replicated-Volume）" class="headerlink" title="分布式复制卷（Distributed Replicated Volume）"></a>分布式复制卷（Distributed Replicated Volume）</h4><p>分布式复制GlusterFS卷结合了分布式和复制Gluster卷的特点，看起来类似RAID10，但其实不同，RAID10其实质是条带化，但分布式复制GlusterFS卷则没有。Brick数必须是副本数的倍数。</p>
+<p><img src="https://cloud.githubusercontent.com/assets/10970993/7412402/23a17eae-ef60-11e4-8813-a40a2384c5c2.png" alt="distribution_replicated_volume"></p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># gluster volume create test-volume replica 2 transport tcp server1:/exp1 server2:/exp2 server3:/exp3 </span></code></pre>
+<h4 id="条带卷（Striped-Volume）"><a href="#条带卷（Striped-Volume）" class="headerlink" title="条带卷（Striped Volume）"></a>条带卷（Striped Volume）</h4><p>文件是分片均匀写在各个节点的硬盘上的，优点是分布式读写，性能整体较好。缺点是<strong>没有冗余</strong>，分片随机读写可能会导致硬盘IOPS饱和。</p>
+<p><strong>注意</strong>：Brick的数量应等于带区卷的带区数。</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># gluster volume create test-volume stripe 2 transport tcp server1:/exp1 server2:/exp2</span></code></pre>
+<p><img src="https://img2018.cnblogs.com/blog/1551426/201901/1551426-20190112020028675-315138583.png" alt="img"></p>
+<h4 id="分布式条带卷（Distributed-Striped-Volume）"><a href="#分布式条带卷（Distributed-Striped-Volume）" class="headerlink" title="分布式条带卷（Distributed Striped Volume）"></a>分布式条带卷（Distributed Striped Volume）</h4><p>当单个文件的体型十分巨大，客户端数量更多时，条带卷已经无法满足需求，此时将分布式与条带化结合起来是一个比较好的选择。其性能与服务器数量有关。</p>
+<p><strong>注意</strong>：对于分布式条带化卷，块数应为条带数的倍数。</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># gluster volume create test-volume stripe 4 transport tcp server1:/exp1 server2:/exp2 server3:/exp3 server4:/exp4 server5:/exp5 server6:/exp6 server7:/exp7 server8:/exp8</span></code></pre>
+<p><img src="https://cloud.githubusercontent.com/assets/10970993/7412394/0ce267d2-ef60-11e4-9959-43465a2a25f7.png" alt="distribution_striped_volume"></p>
+<h4 id="条带复制卷（Striped-Replicated-Volumes）"><a href="#条带复制卷（Striped-Replicated-Volumes）" class="headerlink" title="条带复制卷（Striped Replicated Volumes）"></a>条带复制卷（Striped Replicated Volumes）</h4><p>条带复制卷兼顾了条带卷和复制卷两者的优点，相当于RADI 10，用于存储效率高，备份冗余的场景下。Brick数应为复制计数和条带计数的倍数。</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># gluster volume create test-volume stripe 2 replica 2 transport tcp server1:/exp1 server2:/exp2 server3:/exp3 server4:/exp4</span></code></pre>
+<p><img src="E:%5C%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0%5Cmd%E5%9B%BE%E7%89%87%5Cassets%5C3563ac48-ef60-11e4-823f-ee6100c65ad7.png" alt="3563ac48-ef60-11e4-823f-ee6100c65ad7"></p>
+<h4 id="分布式条带复制卷（Distributed-Striped-Replicated-Volumes）"><a href="#分布式条带复制卷（Distributed-Striped-Replicated-Volumes）" class="headerlink" title="分布式条带复制卷（Distributed Striped Replicated Volumes）"></a>分布式条带复制卷（Distributed Striped Replicated Volumes）</h4><p>分布式条带复制卷将分布条带数据在复制卷集群。为了获得最佳效果，可以选择使用分布在高并发的条带复制卷环境下并行访问非常大的文件和性能是至关重要的。对于分布式条带复制卷，Brick数应为条带数和副本数的倍数。</p>
+<h2 id="使用-GlusterFS"><a href="#使用-GlusterFS" class="headerlink" title="使用 GlusterFS"></a>使用 GlusterFS</h2><h3 id="部署GlusterFS-集群"><a href="#部署GlusterFS-集群" class="headerlink" title="部署GlusterFS 集群"></a>部署GlusterFS 集群</h3><h4 id="实验环境说明"><a href="#实验环境说明" class="headerlink" title="实验环境说明"></a>实验环境说明</h4><table>
+<thead>
+<tr>
+<th>系统类型</th>
+<th>IP地址</th>
+<th>主机名</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CentOS 7.6 1810</td>
+<td>10.4.7.50</td>
+<td>client.onelpc.cn</td>
+<td>gluster-client</td>
+</tr>
+<tr>
+<td>CentOS 7.6 1810</td>
+<td>10.4.7.51</td>
+<td>data1.onelpc.cn</td>
+<td>gluster-server</td>
+</tr>
+<tr>
+<td>CentOS 7.6 1810</td>
+<td>10.4.7.52</td>
+<td>data2.onelpc.cn</td>
+<td>gluster-server</td>
+</tr>
+<tr>
+<td>CentOS 7.6 1810</td>
+<td>10.4.7.53</td>
+<td>data3.onelpc.cn</td>
+<td>gluster-server</td>
+</tr>
+</tbody></table>
+<p>client所需软件：glusterfs、glusterfs-fuse</p>
+<p>server所需软件：  glusterfs、glusterfs-server、glusterfs-fuse 、glusterfs-rdma  </p>
+<p>server端：单独创建一块磁盘用来存储数据</p>
+<h4 id="所有节点操作"><a href="#所有节点操作" class="headerlink" title="所有节点操作"></a>所有节点操作</h4><p>关闭防火墙</p>
+<pre class=" language-bash"><code class="language-bash">systemctl disable firewalld.service 
+systemctl stop firewalld.service</code></pre>
+<p>关闭selinux</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sed</span> -i <span class="token string">'s/SELINUX=enforcing/SELINUX=disabled/'</span> /etc/selinux/config
+setenforce 0</code></pre>
+<p>配置域名解析</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">cat</span> <span class="token operator">&lt;&lt;</span>EOF<span class="token operator">>></span> /etc/hosts
+10.4.7.50 client.onelp.cn
+10.4.7.51 data1.onelpc.cn
+10.4.7.52 data2.onelpc.cn
+10.4.7.53 data3.onelpc.cn
+EOF</code></pre>
+<p>下载Gluster 源</p>
+<pre><code>yum -y install centos-release-gluster
+// 该源下载软件的站点为国外，速度很慢。建议将地址改为国内。将文件的baseurl地址改为阿里源的地址</code></pre><h4 id="Gluster-Server-节点操作"><a href="#Gluster-Server-节点操作" class="headerlink" title="Gluster-Server 节点操作"></a>Gluster-Server 节点操作</h4><p>安装Server端服务</p>
+<pre><code>yum -y install glusterfs glusterfs-server glusterfs-fuse glusterfs-rdma</code></pre><p>初始化数据盘</p>
+<blockquote>
+<p>，这里为了更真实的模拟生存环境，将数据单独存放在一块磁盘。也可以直接用系统盘进行数据存储。</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">fdisk</span> /dev/sdb         //
+mkfs.xfs /dev/sdb1 </code></pre>
+<p>创建数据存储目录</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">mkdir</span> -p /gfsdata            //创建数据目录
+<span class="token function">mount</span> /dev/sdb1 /gfsdata/    //挂载数据盘到数据目录，设置为开机自启动需要写入到/etc/fstab</code></pre>
+<p>启动服务</p>
+<pre class=" language-bash"><code class="language-bash">systemctl <span class="token function">enable</span> glusterd        //设置开机自启动
+systemctl start glusterd        //启动gluster服务
+<span class="token function">netstat</span> -lntup<span class="token operator">|</span><span class="token function">grep</span> gluster        //会启动24007端口</code></pre>
+<p>创建 gluster 集群</p>
+<pre><code>gluster peer probe data1.onelpc.cn    //添加本机节点
+gluster peer probe data2.onelpc.cn    //添加data2节点
+gluster peer probe data3.onelpc.cn    //添加data3节点</code></pre><p>查看gluster集群状态</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@data1 ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># gluster peer status</span>
+Number of Peers: 2
+
+Hostname: data2.onelpc.cn
+Uuid: ace1a9eb-0edc-4080-b703-e2d018a01d41
+State: Peer <span class="token keyword">in</span> Cluster <span class="token punctuation">(</span>Connected<span class="token punctuation">)</span>
+
+Hostname: data3.onelpc.cn
+Uuid: 838b4eb8-e1b6-48cc-8b80-db694fd2b815
+State: Peer <span class="token keyword">in</span> Cluster <span class="token punctuation">(</span>Connected<span class="token punctuation">)</span></code></pre>
+<p>创建数据存储卷(复制卷)</p>
+<pre class=" language-bash"><code class="language-bash">gluster  volume  create gv0 replica 3 transport tcp \
+data1.onelpc.cn:/gfsdata \
+data2.onelpc.cn:/gfsdata \
+data3.onelpc.cn:/gfsdata force</code></pre>
+<p>启动复制卷</p>
+<pre class=" language-bash"><code class="language-bash">gluster volume start gv0
+
+gluster volume info        //查看卷信息
+<span class="token operator">==</span><span class="token operator">>></span>输入结果 
+Volume Name: gv0
+Type: Replicate
+Volume ID: 950d0e7e-8d5a-4889-b96e-9fff952e04dd
+Status: Started
+Snapshot Count: 0
+Number of Bricks: 1 x 3 <span class="token operator">=</span> 3
+Transport-type: tcp
+Bricks:
+Brick1: data1.onelpc.cn:/gfsdata    
+Brick2: data2.onelpc.cn:/gfsdata
+Brick3: data3.onelpc.cn:/gfsdata
+Options Reconfigured:
+transport.address-family: inet
+storage.fips-mode-rchecksum: on
+nfs.disable: on
+performance.client-io-threads: off</code></pre>
+<h4 id="Gluster-Client-节点操作"><a href="#Gluster-Client-节点操作" class="headerlink" title="Gluster-Client 节点操作"></a>Gluster-Client 节点操作</h4><p>安装gluster 客户端服务</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@client ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># yum install -y glusterfs gluster-fuse</span></code></pre>
+<p>将gluster的gv0卷挂载</p>
+<blockquote>
+<p>这里直接挂载到/mnt目录</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@client ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># mount -t glusterfs data1.onelpc.cn:gv0 /mnt/</span>
+
+<span class="token punctuation">[</span>root@client ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># df -hT|grep mnt</span>
+data1.onelpc.cn:gv0 fuse.glusterfs   20G  238M   20G   2% /mnt</code></pre>
+<h4 id="Gluster-服务测试"><a href="#Gluster-服务测试" class="headerlink" title="Gluster 服务测试"></a>Gluster 服务测试</h4><p>Client 节点创建文件</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token punctuation">[</span>root@client ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># touch /mnt/file{1..5}</span>
+<span class="token punctuation">[</span>root@client ~<span class="token punctuation">]</span><span class="token comment" spellcheck="true"># ll /mnt/</span>
+total 0
+-rw-r--r-- 1 root root 0 Feb 27 18:51 file1
+-rw-r--r-- 1 root root 0 Feb 27 18:51 file2
+-rw-r--r-- 1 root root 0 Feb 27 18:51 file3
+-rw-r--r-- 1 root root 0 Feb 27 18:51 file4
+-rw-r--r-- 1 root root 0 Feb 27 18:51 file5</code></pre>
+<p>Server节点查看(任意节点)</p>
+<p><img src="E:/%E8%80%81%E7%94%B7%E5%AD%A9%E5%AD%A6%E4%B9%A0/md%E5%9B%BE%E7%89%87/assets/image-20200227185640244.png" alt="image-20200227185640244"></p>
+<h3 id="管理使用GlusterFS"><a href="#管理使用GlusterFS" class="headerlink" title="管理使用GlusterFS"></a>管理使用GlusterFS</h3><h4 id="Gluster-节点管理"><a href="#Gluster-节点管理" class="headerlink" title="Gluster 节点管理"></a>Gluster 节点管理</h4><p>查看节点信息</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 查看节点状态</span>
+gluster peer status
+
+<span class="token comment" spellcheck="true"># 添加节点 </span>
+gluster peer <span class="token operator">&lt;</span>HostaName<span class="token operator">></span> 
+gluster peer 10.4.7.100  //可以使用IP或域名
+
+<span class="token comment" spellcheck="true"># 删除节点</span>
+gluster peer detach <span class="token operator">&lt;</span>HostName<span class="token operator">></span>
+gluster peer detach 10.4.7.100
+//移除节点时要保证节点上没有brick，需要提前移除brick</code></pre>
+<h4 id="Gluster-卷管理"><a href="#Gluster-卷管理" class="headerlink" title="Gluster 卷管理"></a>Gluster 卷管理</h4><p>基础操作</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#卷信息</span>
+gluster volume info
+
+<span class="token comment" spellcheck="true">#卷状态</span>
+gluster volume status
+
+<span class="token comment" spellcheck="true">#启动/停止卷</span>
+gluster volume start/stop <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span>
+gluster volume start gv0
+
+<span class="token comment" spellcheck="true">#删除卷</span>
+gluster volume delete <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span>
+gluster volume stop gv0        //删除卷之前需要先停止
+gluster volume delete gv0 </code></pre>
+<p>均衡卷</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 修复布局，不迁移数据</span>
+gluster volume rebalance <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> fix-layout start
+
+<span class="token comment" spellcheck="true"># 修复布局，迁移数据</span>
+gluster volume rebalance <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span>  start
+
+<span class="token comment" spellcheck="true"># 强制迁移数据</span>
+gluster volume <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> rebalance startforce
+
+<span class="token comment" spellcheck="true"># 查看平衡操作后的状态</span>
+gluster volume <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> rebalance status
+
+<span class="token comment" spellcheck="true"># 停止正在平衡的卷</span>
+gluster volume <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> rebalance stop</code></pre>
+<p>修复卷</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 只修复有问题的文件</span>
+gluster volume heal <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span>
+
+<span class="token comment" spellcheck="true"># 修复所有文件 </span>
+gluster volume heal <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> full  
+
+<span class="token comment" spellcheck="true"># 查看自愈详情</span>
+gluster volume heal <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> info</code></pre>
+<h4 id="Brick管理"><a href="#Brick管理" class="headerlink" title="Brick管理"></a>Brick管理</h4><blockquote>
+<p>复制卷要一次添加的bricks数是replica的整数倍；stripe同样要求。</p>
+<p>复制卷要移除的Brick是replica的整数倍，stripe具有同样的要求，复制卷要移除一对Brick。</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 添加brick </span>
+gluster volume add-brick <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> <span class="token operator">&lt;</span>NEW-BRICK<span class="token operator">></span>
+
+<span class="token comment" spellcheck="true"># 移除brick</span>
+gluster volume remove-brick <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> <span class="token operator">&lt;</span>BRICKNAME<span class="token operator">></span> start<span class="token operator">|</span>status<span class="token operator">|</span>commit
+
+<span class="token comment" spellcheck="true"># 在执行移除操作时，数据会移到其他节点。</span>
+gluster volume remove-brick gv0 10.4.7.54:/dir 10.4.7.55:/dir 10.4.7.56:/dir start
+
+<span class="token comment" spellcheck="true"># 在执行移除操作后，可以使用status命令进行task状态查看.</span>
+gluster volume remove-brick gv0 10.4.7.54:/dir 10.4.7.55:/dir 10.4.7.56:/dir  status
+
+<span class="token comment" spellcheck="true"># 使用commit命令执行brick移除，则不会进行数据迁移而直接删除brick.</span>
+gluster volume remove-brick gv0 10.4.7.54:/dir 10.4.7.55:/dir 10.4.7.56:/dir commit
+
+<span class="token comment" spellcheck="true"># 替换brick</span>
+注意：仅在分布式复制或纯复制卷中支持在gluster中使用“ replace-brick”命令替换砖块。</code></pre>
+<h4 id="系统拓展"><a href="#系统拓展" class="headerlink" title="系统拓展"></a>系统拓展</h4><p>系统配额</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 开启/关闭系统配额，需要使用enable将其开启；disable为关闭命令</span>
+gluster volume <span class="token function">quota</span> <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> <span class="token punctuation">{</span>enable/disable<span class="token punctuation">}</span>
+
+<span class="token comment" spellcheck="true">#设置目录配额</span>
+gluster volume <span class="token function">quota</span> <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> limit-usage /directory <span class="token operator">&lt;</span>size<span class="token operator">></span>
+gluster volume <span class="token function">quota</span> gv0 limit-usage /quota 1GB        //设置gv0卷下子目录/quota的配额为1G
+
+<span class="token comment" spellcheck="true"># 查看配额</span>
+gluster volume <span class="token function">quota</span> <span class="token operator">&lt;</span>VOLNAME<span class="token operator">></span> list
+gluster volume <span class="token function">quota</span> gv0 list            //查看gv0卷的配额列表
+gluster volume <span class="token function">quota</span> gv0 list /quota    //查看gv0卷下/quota的配额信息</code></pre>
+<p>地域复制</p>
+<pre><code></code></pre><p>I/O信息查看</p>
+<blockquote>
+<p><code>profile command</code>提供了一个接口查看每个卷中的每个brick的io信息,有助于确定存储系统中的瓶颈。</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># 启动 profiling，之后便可以进行io查看</span>
+gluster volume profile VOLNAME start
+
+<span class="token comment" spellcheck="true"># 查看io信息，可以查看到每个brick的io信息</span>
+gluster volume profile VOLNAME info
+
+<span class="token comment" spellcheck="true"># 关闭 profiling 功能</span>
+gluster volume profile VOLNAME stop</code></pre>
+<h4 id="top监控"><a href="#top监控" class="headerlink" title="top监控"></a>top监控</h4><blockquote>
+<p><code>top command</code>允许你查看bricks的性能，读取，写入，文件打开调用，文件读取调用，文件写入调用，目录打开调用和目录实际调用。默认100个结果。</p>
+</blockquote>
+<pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">### BRICK-NAME 指定brick的名称，list-cnt 指定个数</span>
+<span class="token comment" spellcheck="true"># 查看打开的fd</span>
+gluster volume <span class="token function">top</span> VOLNAME <span class="token function">open</span> <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span>
+
+<span class="token comment" spellcheck="true"># 查看调用次数最多的读调用</span>
+gluster volume <span class="token function">top</span> VOLNAME <span class="token function">read</span> <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span>
+
+<span class="token comment" spellcheck="true"># 查看调用次数最多的写调用</span>
+gluster volume <span class="token function">top</span> VOLNAME <span class="token function">write</span> <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span>
+
+<span class="token comment" spellcheck="true"># 查看次数最多的目录调用</span>
+gluster volume <span class="token function">top</span> opendir <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span>
+gluster volume <span class="token function">top</span> readdir <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span>
+
+<span class="token comment" spellcheck="true"># 查看每个brick的读性能</span>
+gluster volume <span class="token function">top</span> VOLNAME read-perf <span class="token punctuation">[</span>bs blk-size count count<span class="token punctuation">]</span> <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span>
+<span class="token comment" spellcheck="true"># 查看每个brick的写性能</span>
+gluster volume <span class="token function">top</span> VOLNAME write-perf <span class="token punctuation">[</span>bs blk-size count count<span class="token punctuation">]</span> <span class="token punctuation">[</span>brick BRICK-NAME<span class="token punctuation">]</span> <span class="token punctuation">[</span>list-cnt cnt<span class="token punctuation">]</span></code></pre>
+]]></content>
+  </entry>
+  <entry>
     <title>git 与 gitlab</title>
     <url>/2020/01/03/git%20%E4%B8%8E%20gitlab/</url>
     <content><![CDATA[<p>[TOC]</p><h2 id="版本控制系统概述-git"><a href="#版本控制系统概述-git" class="headerlink" title="版本控制系统概述 git"></a>版本控制系统概述 git</h2><h3 id="Git基本概述"><a href="#Git基本概述" class="headerlink" title="Git基本概述"></a>Git基本概述</h3><p>Git是一个免费的开源分布式版本控制系统，旨在快速高效地处理从小型到大型项目的所有内容。</p><h3 id="Git安装配置"><a href="#Git安装配置" class="headerlink" title="Git安装配置"></a>Git安装配置</h3><pre class=" language-bash"><code class="language-bash"><span class="token comment" spellcheck="true">#安装Git</span>
